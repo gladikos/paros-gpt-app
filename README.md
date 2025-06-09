@@ -27,7 +27,7 @@ cd paros-gpt-app
 ### 🧠 2. Run the Backend (FastAPI)
 
 ```bash```
-cd backend
+cd backend "/n"
 source venv/bin/activate     # or `source venv/bin/activate.fish` if using fish shell
 pip install -r requirements.txt
 uvicorn main:app --reload
