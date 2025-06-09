@@ -1,0 +1,88 @@
+/* Container wraps the whole ParosGPT page */
+/* .parosgpt-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+} */
+
+.parosgpt-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 92dvh;
+  overflow: hidden;
+  max-width: 1600px;
+  margin: 0 auto;
+  /* padding: 0 2rem; */
+  box-sizing: border-box;
+}
+
+/* Sticky header section */
+.parosgpt-header-container {
+  position: sticky;
+  top: 0;
+  /* margin: 3rem auto;  */
+  z-index: 10;
+  background: white;
+  padding: 0rem 2rem 0.5rem 2rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04);
+}
+
+/* Header layout */
+.parosgpt-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.parosgpt-header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.parosgpt-logo {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  display: block;
+}
+
+.parosgpt-title {
+  font-size: 2rem;
+  margin: 0;
+  line-height: 1;
+}
+
+.new-chat-header-button {
+  background-color: #d0efff;
+  color: #0077aa;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
+  border-radius: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.new-chat-header-button:hover {
+  background-color: #00aaff;
+  color: white;
+}
+
+/* Scrollable chatbox area below header */
+.parosgpt-chatbox-container {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  /* 🟦 Add this */
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  /* margin: 3rem auto; */
+  margin: 0 2rem 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  background-color: #ffffff;
+  min-height: 0;
+}

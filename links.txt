@@ -1,0 +1,2 @@
+backend: "https://parosmate-backend.onrender.com"
+frontend: "https://parosmate.netlify.app"

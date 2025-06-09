@@ -1,0 +1,269 @@
+- Transportation:
+    - Buses routes to the whole island
+
+- Key Attractions:
+    - Naousa
+
+## Bus information (KTEL Paros)
+Source: https://ktelparou.gr/en/bus-schedules.html
+
+To view, download or print the timetable from 01/06/25 till 13/06/25, please click here:
+bus timetable.pdf (152.4KB)
+Bus timetable from 01/06/2025 till 13/06/2025
+From Parikia to Marathi- Kostos- Lefkes- Prodromos- Marmara- Marpissa- Piso Livadi- Logaras- Punda Beach- Golden Beach- Drios
+07.30*, 10.00*,12.10*, 14.15*, 16.10*, 18.00*, 20.00*
+From Drios to Golden Beach- Punda Beach- Logaras- Piso Livadi- Marpissa- Marmara- Prodromos- Lefkes- Kostos- Marathi- Parikia
+07.05* ,08.55*, 11.00*, 13.05*, 14.55*, 17.00*, 19.00*,21.00*
+* From/To Aspro Chorio
+From Parikia to Naoussa
+07.25*, 09.00, 10.00, 10.40, 11.00*, 11.45, 12.10, 13.00*, 13.50, 14.15, 15.00, 16.10, 16.30, 17.00, 18.00, 19.00, 19.30, 20.00, 21.10, 22.10, 23.10, 00.10
+From Naoussa to Parikia
+07.50, 08.10*, 09.30, 10.35, 11.30*, 12.30, 13.20, 13.35*, 14.35*, 15.30, 16.30, 17.05, 17.30, 18.05,  18.30, 19.05, 19.30,  20.30, 21.05, 21.30, 22.30, 00.30
+* Through Kamares
+From Parikia to Aliki
+07.10, 08.40, 11.00, 12.10>, 13.30>, 14.15, 16.10>, 18.00, 20.10^, 23.10^
+From Aliki to Parikia
+07.40, 09.10>, 11.30, 13.50, 14.40, 16.40, 18.25>, 20.40, 23.40
+* Through Voutakos- Pounta
+^ Through Pounta- Voutakos
+From Parikia to Punda (Antiparos)
+07.10>, 09.10, 10.10, 11.10, 12.10, 13.30, 14.15, 15.10, 16.10, 17.10, 18.10, 19.10, 20.10, 22.10, 23.10
+From Punda (Antiparos) to Parikia
+07.50, 09.25, 10.25, 11.25, 12.25, 13.45, 14.25>, 15.25, 16.25, 17.25, 18.25, 19.25, 20.25*, 22.25, 23.25*
+* Through Voutakos- Aliki
+^ Through Aliki- Voutakos
+> Through Voutakos
+From Parikia to Naoussa â Prodromos â Marpissa â Piso Livadi â Logaras â Punda Beach â Golden Beach- Drios
+09.00, 10.40, 11.45,13.50, 15.00, 16.30, 19.30, 23.10
+From Naoussa to Drios
+09.20, 11.00, 12.05, 14.15, 15.20, 16.50, 19.50, 23.30
+From Drios to Naoussa- Parikia
+07.05, 10.00, 12.40, 16.30, 17.30,  20.30
+From Naoussa to Kolimpithres
+10.45, 13.35, 15.00, 17.30
+From Kolimpithres to Naoussa
+10.55, 15.10, 17.40
+From Naoussa to Santa Maria
+11.15, 13.35, 16.00, 18.00
+From Santa Maria to Naoussa
+11.30, 13.50, 16.15, 18.15
+From Naoussa to Lefkes - Kostos
+09.45, 12.30, 14.15
+From Lefkes â Kostos to Naoussa
+10.00, 13.10, 14.30
+From Parikia to Voutakos
+07.10, 08.40, 12.10, 13.30, 14.15, 16.10, 18.00, 20.10, 23.10
+From Voutakos to Parikia
+07.40, 09.20, 13.50, 14.35, 16.35, 18.35, 20.35, 23.35
+From Aspro Chorio to Lefkes- Parikia
+07.05, 08.55, 11.00, 13.05, 14.55, 17.00, 19.00, 21.00
+From Aspro Chorio to Naoussa- Parikia
+Monday-Friday: 07.05
+From Parikia to Aspro Chorio
+07.30, 10.00, 12.10, 14.15, 16.10, 18.00, 20.00
+From Agkeria to Parikia
+07.35, 09.05>, 11.35, 13.55, 14.45, 16.45, 18.20, 20.45, 23.45
+From Parikia to Agkeria
+07.10, 08.40, 11.00, 12.10^, 13.30^, 14.15, 16.10>, 18.00, 20.10^, 23.10^
+* Through Voutakos- Pounta
+^ Through Pounta- Voutakos
+From Kostos to Parikia
+07.40, 09.30, 11.30, 13.40, 15.30, 17.30, 19.30, 21.30
+From Kostos to Drios
+07.45*, 10.15*, 12.25*, 14.30*, 16.25*, 18.15*, 20.15*
+* Aspro Chorio
+From Lefkes to Parikia
+07.35, 09.25, 11.25, 13.35, 15.25, 17.25, 19.25, 21.25
+From Lefkes to Drios
+07.50*, 10.20*, 12.30*, 14.35*, 16.30*, 18.20*, 20.20*
+* From/To Aspro Chorio
+From Prodromos to Lefkes- Parikia
+07.30, 09.20, 11.20, 13.30, 15.20, 17.20, 19.20, 21.20
+From Prodromos to Naoussa- Parikia
+07.30, 10.20, 13.00, 16.50, 17.50, 20.50
+From Prodromos to Drios
+07.55, 09.30, 10.30, 11.05, 12.15, 12.35, 14.35, 15.30, 16.25, 17.05, 18.25, 20.05, 20.30, 23.35
+From Marmara to Lefkes- Parikia
+07.25, 09.15, 11.15,  13.25, 15.15, 17.15, 19.15, 21.15
+From Marmara to Naoussa- Parikia
+07.25
+From Marmara to Drios
+08.00, 10.30, 12.40, 14.35, 16.35, 18.30, 20.30
+From Marpissa to Lefkes- Parikia
+08.00, 10.30, 12.40, 14.35, 16.35, 18.30, 20.30
+From Marpissa to Naoussa- Parikia
+07.25, 10.15, 12.55, 16.45, 17.45, 20.45
+From Marpissa to Drios
+07.55, 09.30, 10.30, 11.05, 12.15, 12.35, 14.35, 15.35, 16.35, 17.05, 18.25, 20.05, 20.30, 23.35
+From Piso Livadi to Lefkes- Parikia
+07.20, 09.10, 11.10, 13.20, 15.10, 17.10, 19.10, 21.10
+From Piso Livadi to Naoussa- Parikia
+07.20, 10.10, 12.50, 16.40, 17.40, 20.40
+From Piso Livadi to Drios
+08.00, 09.35, 10.35, 11.10, 12.20, 12.40, 14.40, 15.40, 16.40, 17.10, 18.35, 20.10, 20.35,  23.45
+From Logaras to Lefkes- Parikia
+07.20, 09.10, 11.10, 13.20, 15.10, 17.10, 19.10, 21.10
+From Logaras to Naoussa- Parikia
+07.20, 10.10, 12.50, 16.40, 17.40, 20.40
+From Logaras to Drios
+08.00, 09.35, 10.35, 11.10, 12.20, 12.40, 14.40, 15.40 16.40, 17.10,  18.35, 20.10, 20.35, 23.45
+From Punda Beach to Lefkes-Parikia
+07.15, 09.05, 11.05, 13.15, 15.05, 17.05, 19.05, 21.05
+From Punda Beach to Naoussa-Parikia
+07.15, 10.05, 12.45, 16.35, 17.35, 20.35
+From Golden Beach to Lefkes- Parikia
+07.05, 09.00, 11.05, 13.05, 15.00, 17.05, 19.05, 21.05
+From Golden Beach to Naoussa- Parikia
+07.10, 10.05, 12.45, 16.35, 17.35, 20.35
+From Parasporos to Parikia
+07.55, 09.35, 10.35, 11.35, 13.55, 14.55, 15.35, 16.55, 17.35, 18.35, 19.35, 20.55, 22.35, 23.55
+From Parikia to Parasporos
+07.10, 08.40, 09.10, 10.10, 11.10, 12.10, 13.30, 14.15, 15.10,16.10, 17.10, 18.00, 19.10, 20.10, 22.10, 23.10
+From Butterflies Valley to Parikia
+07.45, 08.55, 11.40, 13.50, 14.50, 16.50, 18.10, 20.50, 23.50
+From Parikia to Butterflies Valley
+07.10, 08.40, 11.00, 13.30, 14.15, 16.10, 18.00, 20.10, 23.10
+From Parikia to the Airport
+07.10, 08.40, 11.00, 12.10, 14.15, 16.10, 18.00, 21.10
+From the Airport to Parikia
+09.00, 11.15, 14.50, 16.50, 18.15, 20.50
+From Pounda Port to the Airport
+14.25, 16.25
+*Tickets are also available on the bus, sold by the driver, at an increased price of â¬2.50 or â¬3.50- depending on the distance covered.
+
+## Bus Schedule (KTEL Paros)
+Source: https://ktelparou.gr/en/bus-schedules.html
+
+To view, download or print the timetable from 01/06/25 till 13/06/25, please click here:
+bus timetable.pdf (152.4KB)
+Bus timetable from 01/06/2025 till 13/06/2025
+From Parikia to Marathi- Kostos- Lefkes- Prodromos- Marmara- Marpissa- Piso Livadi- Logaras- Punda Beach- Golden Beach- Drios
+07.30*, 10.00*,12.10*, 14.15*, 16.10*, 18.00*, 20.00*
+From Drios to Golden Beach- Punda Beach- Logaras- Piso Livadi- Marpissa- Marmara- Prodromos- Lefkes- Kostos- Marathi- Parikia
+07.05* ,08.55*, 11.00*, 13.05*, 14.55*, 17.00*, 19.00*,21.00*
+* From/To Aspro Chorio
+From Parikia to Naoussa
+07.25*, 09.00, 10.00, 10.40, 11.00*, 11.45, 12.10, 13.00*, 13.50, 14.15, 15.00, 16.10, 16.30, 17.00, 18.00, 19.00, 19.30, 20.00, 21.10, 22.10, 23.10, 00.10
+From Naoussa to Parikia
+07.50, 08.10*, 09.30, 10.35, 11.30*, 12.30, 13.20, 13.35*, 14.35*, 15.30, 16.30, 17.05, 17.30, 18.05,  18.30, 19.05, 19.30,  20.30, 21.05, 21.30, 22.30, 00.30
+* Through Kamares
+From Parikia to Aliki
+07.10, 08.40, 11.00, 12.10>, 13.30>, 14.15, 16.10>, 18.00, 20.10^, 23.10^
+From Aliki to Parikia
+07.40, 09.10>, 11.30, 13.50, 14.40, 16.40, 18.25>, 20.40, 23.40
+* Through Voutakos- Pounta
+^ Through Pounta- Voutakos
+From Parikia to Punda (Antiparos)
+07.10>, 09.10, 10.10, 11.10, 12.10, 13.30, 14.15, 15.10, 16.10, 17.10, 18.10, 19.10, 20.10, 22.10, 23.10
+From Punda (Antiparos) to Parikia
+07.50, 09.25, 10.25, 11.25, 12.25, 13.45, 14.25>, 15.25, 16.25, 17.25, 18.25, 19.25, 20.25*, 22.25, 23.25*
+* Through Voutakos- Aliki
+^ Through Aliki- Voutakos
+> Through Voutakos
+From Parikia to Naoussa â Prodromos â Marpissa â Piso Livadi â Logaras â Punda Beach â Golden Beach- Drios
+09.00, 10.40, 11.45,13.50, 15.00, 16.30, 19.30, 23.10
+From Naoussa to Drios
+09.20, 11.00, 12.05, 14.15, 15.20, 16.50, 19.50, 23.30
+From Drios to Naoussa- Parikia
+07.05, 10.00, 12.40, 16.30, 17.30,  20.30
+From Naoussa to Kolimpithres
+10.45, 13.35, 15.00, 17.30
+From Kolimpithres to Naoussa
+10.55, 15.10, 17.40
+From Naoussa to Santa Maria
+11.15, 13.35, 16.00, 18.00
+From Santa Maria to Naoussa
+11.30, 13.50, 16.15, 18.15
+From Naoussa to Lefkes - Kostos
+09.45, 12.30, 14.15
+From Lefkes â Kostos to Naoussa
+10.00, 13.10, 14.30
+From Parikia to Voutakos
+07.10, 08.40, 12.10, 13.30, 14.15, 16.10, 18.00, 20.10, 23.10
+From Voutakos to Parikia
+07.40, 09.20, 13.50, 14.35, 16.35, 18.35, 20.35, 23.35
+From Aspro Chorio to Lefkes- Parikia
+07.05, 08.55, 11.00, 13.05, 14.55, 17.00, 19.00, 21.00
+From Aspro Chorio to Naoussa- Parikia
+Monday-Friday: 07.05
+From Parikia to Aspro Chorio
+07.30, 10.00, 12.10, 14.15, 16.10, 18.00, 20.00
+From Agkeria to Parikia
+07.35, 09.05>, 11.35, 13.55, 14.45, 16.45, 18.20, 20.45, 23.45
+From Parikia to Agkeria
+07.10, 08.40, 11.00, 12.10^, 13.30^, 14.15, 16.10>, 18.00, 20.10^, 23.10^
+* Through Voutakos- Pounta
+^ Through Pounta- Voutakos
+From Kostos to Parikia
+07.40, 09.30, 11.30, 13.40, 15.30, 17.30, 19.30, 21.30
+From Kostos to Drios
+07.45*, 10.15*, 12.25*, 14.30*, 16.25*, 18.15*, 20.15*
+* Aspro Chorio
+From Lefkes to Parikia
+07.35, 09.25, 11.25, 13.35, 15.25, 17.25, 19.25, 21.25
+From Lefkes to Drios
+07.50*, 10.20*, 12.30*, 14.35*, 16.30*, 18.20*, 20.20*
+* From/To Aspro Chorio
+From Prodromos to Lefkes- Parikia
+07.30, 09.20, 11.20, 13.30, 15.20, 17.20, 19.20, 21.20
+From Prodromos to Naoussa- Parikia
+07.30, 10.20, 13.00, 16.50, 17.50, 20.50
+From Prodromos to Drios
+07.55, 09.30, 10.30, 11.05, 12.15, 12.35, 14.35, 15.30, 16.25, 17.05, 18.25, 20.05, 20.30, 23.35
+From Marmara to Lefkes- Parikia
+07.25, 09.15, 11.15,  13.25, 15.15, 17.15, 19.15, 21.15
+From Marmara to Naoussa- Parikia
+07.25
+From Marmara to Drios
+08.00, 10.30, 12.40, 14.35, 16.35, 18.30, 20.30
+From Marpissa to Lefkes- Parikia
+08.00, 10.30, 12.40, 14.35, 16.35, 18.30, 20.30
+From Marpissa to Naoussa- Parikia
+07.25, 10.15, 12.55, 16.45, 17.45, 20.45
+From Marpissa to Drios
+07.55, 09.30, 10.30, 11.05, 12.15, 12.35, 14.35, 15.35, 16.35, 17.05, 18.25, 20.05, 20.30, 23.35
+From Piso Livadi to Lefkes- Parikia
+07.20, 09.10, 11.10, 13.20, 15.10, 17.10, 19.10, 21.10
+From Piso Livadi to Naoussa- Parikia
+07.20, 10.10, 12.50, 16.40, 17.40, 20.40
+From Piso Livadi to Drios
+08.00, 09.35, 10.35, 11.10, 12.20, 12.40, 14.40, 15.40, 16.40, 17.10, 18.35, 20.10, 20.35,  23.45
+From Logaras to Lefkes- Parikia
+07.20, 09.10, 11.10, 13.20, 15.10, 17.10, 19.10, 21.10
+From Logaras to Naoussa- Parikia
+07.20, 10.10, 12.50, 16.40, 17.40, 20.40
+From Logaras to Drios
+08.00, 09.35, 10.35, 11.10, 12.20, 12.40, 14.40, 15.40 16.40, 17.10,  18.35, 20.10, 20.35, 23.45
+From Punda Beach to Lefkes-Parikia
+07.15, 09.05, 11.05, 13.15, 15.05, 17.05, 19.05, 21.05
+From Punda Beach to Naoussa-Parikia
+07.15, 10.05, 12.45, 16.35, 17.35, 20.35
+From Golden Beach to Lefkes- Parikia
+07.05, 09.00, 11.05, 13.05, 15.00, 17.05, 19.05, 21.05
+From Golden Beach to Naoussa- Parikia
+07.10, 10.05, 12.45, 16.35, 17.35, 20.35
+From Parasporos to Parikia
+07.55, 09.35, 10.35, 11.35, 13.55, 14.55, 15.35, 16.55, 17.35, 18.35, 19.35, 20.55, 22.35, 23.55
+From Parikia to Parasporos
+07.10, 08.40, 09.10, 10.10, 11.10, 12.10, 13.30, 14.15, 15.10,16.10, 17.10, 18.00, 19.10, 20.10, 22.10, 23.10
+From Butterflies Valley to Parikia
+07.45, 08.55, 11.40, 13.50, 14.50, 16.50, 18.10, 20.50, 23.50
+From Parikia to Butterflies Valley
+07.10, 08.40, 11.00, 13.30, 14.15, 16.10, 18.00, 20.10, 23.10
+From Parikia to the Airport
+07.10, 08.40, 11.00, 12.10, 14.15, 16.10, 18.00, 21.10
+From the Airport to Parikia
+09.00, 11.15, 14.50, 16.50, 18.15, 20.50
+From Pounda Port to the Airport
+14.25, 16.25
+*Tickets are also available on the bus, sold by the driver, at an increased price of â¬2.50 or â¬3.50- depending on the distance covered.
+
+## Bus Information (KTEL Paros)
+Source: https://ktelparou.gr/en/index.html
+
+Provides intercity passenger transportation services with quality, safety and speed, namely transportation of passengers and luggage to predetermined destinations within the island of Paros. Also runs extra routes covering the local tourism market needs throughout the year.
+Have a look on the scheduled bus services and the extra ones of PAROS KTEL and plan your transportations efficiently.
+ââPAROS K.T.E.L. S.A.ââ enables you to plan cultural outings, leisure, family vacation or business trip through Deep Blue Travel.
+Information on transportation, safety and parcel shipping costs.
+Parikia, P.C. 84400 - Paros Transportation office: +302284021395, +302284022273 Accounting office: +302284021133 E-mail:
+For full, up-to-date bus schedules and departure times, visit the official site: https://ktelparou.gr/en

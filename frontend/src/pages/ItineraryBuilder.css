@@ -1,0 +1,332 @@
+.page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1rem 0;
+  background: #f0f6fa;
+  min-height: 100vh;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.page-logo {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}
+
+.page-header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #003e66;
+  margin: 0;
+}
+
+.itinerary-form-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: transparent;
+}
+
+.itinerary-form {
+  width: 100%;
+  max-width: 900px;
+  background: linear-gradient(to bottom right, #c6e8fa, #9dbedc);
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  animation: fadeIn 0.6s ease;
+}
+
+.itinerary-form h2 {
+  color: #005b8e;
+  margin-bottom: 2rem;
+  font-size: 1.8rem;
+  text-align: center;
+}
+
+.form-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+
+.form-row.three .form-group {
+  flex: 1;
+}
+
+.form-row.full {
+  flex-direction: column;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 0.8rem 1rem;
+  font-size: 1rem;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  background-color: #f9fbfd;
+  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.05);
+  transition: 0.3s;
+}
+
+.form-group textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.form-group label {
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+  color: #003e66;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.tags button {
+  background-color: #a8d6f5;
+  color: #003e66;
+  border: none;
+  border-radius: 999px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.tags button:hover {
+  background-color: #82c2f0;
+}
+
+.form-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.form-buttons button {
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.form-buttons .generate {
+  background: #007ac2;
+  color: white;
+}
+
+.form-buttons .generate:hover {
+  background: #005b8e;
+}
+
+.form-buttons .reset {
+  background: #d0d7dd;
+  color: #333;
+}
+
+.form-buttons .reset:hover {
+  background: #ffffff;
+  color: #333;
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 3px solid white;
+  border-top: 3px solid transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.output-wrapper {
+  width: 100%;
+  max-width: 900px;
+  margin-top: 2rem;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* padding: 0rem 0rem 0rem 0rem;  */
+}
+
+
+.output-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: white;
+  padding: 1rem 1.5rem;
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.05);
+}
+
+.output-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #003e66;
+}
+
+.open-btn {
+  background-color: #007ac2;
+  color: white;
+  border: none;
+  padding: 0.5rem 1.2rem;
+  font-size: 0.9rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.open-btn:hover {
+  background-color: #005b8e;
+}
+
+.output-card {
+  width: 100%;
+  background: #ffffff;
+  /* background: linear-gradient(to bottom right, #c6e8fa, #9dbedc); */
+  border-radius: 0 0 20px 20px;
+  padding: 2rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  font-family: "Courier New", monospace;
+  overflow-wrap: break-word; /* ✅ Modern word wrapping */
+  line-height: 1.6;
+  color: #003e66;
+  animation: fadeIn 0.6s ease;
+}
+
+.output-card .error {
+  color: red;
+  font-weight: bold;
+}
+
+.itinerary-text {
+  font-family: sans-serif; /* or keep "Courier New" if you prefer */
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.6;
+  color: #003e66;
+}
+
+.itinerary-text h1,
+.itinerary-text h2,
+.itinerary-text h3 {
+  color: #005b8e;
+  margin-top: 1rem;
+}
+
+.itinerary-text strong {
+  font-weight: 600;
+}
+
+.itinerary-text p {
+  margin: 0.5rem 0;
+}
+
+.day-card {
+  background: linear-gradient(to bottom right, #c6e8fa, #9dbedc);
+  padding: 1.5rem 2rem;
+  margin-bottom: 1.5rem;
+  border-radius: 20px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
+  animation: fadeIn 0.6s ease;
+  border-left: 5px solid #007ac2;
+}
+
+.day-card h3 {
+  margin-top: 0;
+  font-size: 1.4rem;
+  color: #003e66;
+}
+
+.tooltip-container {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip-container .tooltip-text {
+  visibility: hidden;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  padding: 6px 10px;
+  border-radius: 6px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%; /* Position above button */
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  white-space: nowrap;
+  transition: opacity 0.3s;
+  font-size: 0.8rem;
+}
+
+.tooltip-container:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+  }
+
+  .form-buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .form-buttons button {
+    width: 100%;
+  }
+
+  .tags {
+    justify-content: center;
+  }
+
+  .toggle-btn {
+    padding: 0.4rem 1rem;
+    font-size: 0.85rem;
+  }
+}

@@ -1,0 +1,90 @@
+@import "leaflet/dist/leaflet.css";
+
+:root {
+  --sidebar-width: 240px;
+}
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: "Helvetica Neue", sans-serif;
+  background-color: white;
+  overflow: hidden;
+}
+
+.app-layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.main-content {
+  flex: 1 1 auto;
+  margin-left: var(--sidebar-width);
+  /* height: 100%; */
+  min-height: 100vh;
+  overflow-y: auto;
+  transition: margin-left 0.3s ease;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.main-content.sidebar-hidden {
+  margin-left: 0;
+}
+
+.toggle-btn {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 9999;
+  font-size: 1.4rem;
+  background: #00aaff;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  cursor: pointer;
+}
+
+.toggle-btn-wrapper {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 999;
+}
+
+/* .toggle-btn {
+  background-color: #0077aa;
+  color: white;
+  font-size: 1.5rem;
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  position: relative;
+} */
+
+.custom-tooltip {
+  position: absolute;
+  top: 50%;
+  left: 110%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.85rem;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-btn-wrapper:hover .custom-tooltip {
+  opacity: 1;
+}
+
