@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { FaEye, FaFilePdf } from "react-icons/fa";
-import { FaTrash } from "react-icons/fa";
+import { FaTrash, FaUser, FaMapMarkedAlt } from "react-icons/fa";
 import html2pdf from "html2pdf.js";
 import { marked } from "marked";
 import "./ProfilePage.css";
@@ -94,8 +94,8 @@ const handleSavePDF = (content, index) => {
 
       <div className="section">
         <div className="section-header">
-          <h2>User Summary</h2>
-          <h4>Explore your personal information.</h4>
+          <h2><FaUser /> User Summary</h2>
+          {/* <h4>Explore your personal information.</h4> */}
           <button onClick={() => setShowSummary(!showSummary)}>
             {showSummary ? "▲" : "▼"}
           </button>
@@ -111,8 +111,8 @@ const handleSavePDF = (content, index) => {
 
       <div className="section">
         <div className="section-header">
-          <h2>Saved Itineraries</h2>
-          <h4>Explore your saved itineraries. If you want you can download them locally to your computer.</h4>
+          <h2><FaMapMarkedAlt /> Saved Itineraries</h2>
+          {/* <h4>Explore your saved itineraries. If you want you can download them locally to your computer.</h4> */}
           <button onClick={() => setShowItineraries(!showItineraries)}>
             {showItineraries ? "▲" : "▼"}
           </button>
