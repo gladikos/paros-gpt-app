@@ -1,6 +1,7 @@
 # auth.py
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from jose import JWTError, jwt
@@ -18,6 +19,9 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 Base.metadata.create_all(bind=engine)
 
 class UserCreate(BaseModel):
+    name: str
+    surname: str
+    mobile: str
     email: str
     password: str
 
@@ -38,7 +42,13 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     if db.query(User).filter(User.email == user.email).first():
         raise HTTPException(status_code=400, detail="Email already registered")
     hashed = get_password_hash(user.password)
-    db_user = User(email=user.email, hashed_password=hashed)
+    db_user = User(
+        name=user.name,
+        surname=user.surname,
+        mobile=user.mobile,
+        email=user.email,
+        hashed_password=hashed
+    )
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
@@ -52,14 +62,21 @@ def login(form: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get
     token = create_access_token(data={"sub": user.email})
     return {"access_token": token, "token_type": "bearer"}
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+
 @router.get("/me")
-def get_current_user(token: str = Depends(OAuth2PasswordRequestForm), db: Session = Depends(get_db)):
+def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     try:
-        payload = jwt.decode(token.password, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email = payload.get("sub")
         user = db.query(User).filter(User.email == email).first()
         if user is None:
             raise HTTPException(status_code=401, detail="Invalid token")
-        return {"email": user.email}
+        return {
+            "name": user.name,
+            "surname": user.surname,
+            "mobile": user.mobile,
+            "email": user.email
+        }
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")

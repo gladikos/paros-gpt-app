@@ -31,6 +31,11 @@ function Sidebar({ isOpen, onClose }) {
           <button className="sidebar-close-btn" onClick={onClose}>×</button>
         </div>
 
+        <NavLink to="/profile" className={isActive("/profile")}>
+          <img src="user-icon.png" alt="User Logo" className="link-icon" />
+          <span className="link-text">Profile</span>
+        </NavLink>
+
         <NavLink to="/" className={isActive("/")}>
           <img src="home-icon-small.png" alt="Home Logo" className="link-icon" />
           <span className="link-text">Home</span>

@@ -6,6 +6,7 @@ import { AuthProvider } from "./AuthContext";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import Sidebar from "./components/Sidebar";
+import ProfilePage from "./pages/ProfilePage";
 import ParosGPT from "./pages/ParosGPT";
 import ItineraryBuilder from "./pages/ItineraryBuilder";
 import SmartGuide from "./pages/SmartGuide";
@@ -53,6 +54,7 @@ function AppLayout() {
           <Route path="/" element={<PrivateRoute element={<Home />} />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/profile" element={<PrivateRoute element={<ProfilePage />} />} />
           <Route path="/parosgpt" element={<PrivateRoute element={<ParosGPT />} />} />
           <Route path="/itinerarybuilder" element={<PrivateRoute element={<ItineraryBuilder />} />} />
           <Route path="/smart-guide" element={<PrivateRoute element={<SmartGuide />} />} />
