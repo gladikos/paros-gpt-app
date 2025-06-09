@@ -131,14 +131,6 @@
   filter: brightness(0) invert(1);
 }
 
-/* .logout-link {
-  color: #ff4d4d;
-}
-
-.logout-link:hover {
-  background-color: rgba(255, 77, 77, 0.15);
-  color: #cc0000;
-} */
 .sidebar-content {
   display: flex;
   flex-direction: column;
@@ -172,4 +164,45 @@
   padding: 0.1rem 0.4rem;
   border-radius: 6px;
   transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.2);
+    transform: translateX(-100%);
+    overflow-y: scroll;
+  }
+
+  .sidebar.hidden {
+    transform: translateX(-100%);
+  }
+
+  .sidebar.show {
+    transform: translateX(0);
+  }
+
+  .sidebar-close-btn {
+    font-size: 1.8rem;
+    padding: 0.3rem 0.8rem;
+  }
+
+  .sidebar-logo {
+    width: 48px;
+    height: 48px;
+  }
+
+  .sidebar-title {
+    font-size: 1.1rem;
+  }
+
+  .link-text {
+    font-size: 0.95rem;
+  }
+
+  .sidebar-footer {
+    font-size: 0.8rem;
+    padding-top: 0.5rem;
+  }
 }

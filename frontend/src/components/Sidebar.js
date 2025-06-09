@@ -20,7 +20,7 @@ function Sidebar({ isOpen, onClose }) {
   };
 
   return (
-    <div className={`sidebar ${isOpen ? "" : "hidden"}`}>
+    <div className={`sidebar ${isOpen ? "show" : "hidden"}`}>
       <div className="sidebar-content">
         <div className="sidebar-links">
         <div className="sidebar-header">
@@ -85,7 +85,7 @@ function Sidebar({ isOpen, onClose }) {
 
 
         <div className="sidebar-footer">
-          Built by <a className="queryble-link" href="https://queryble.ai">Queryble</a>
+          Powered by <a className="queryble-link" href="https://queryble.ai">Queryble</a>
         </div>
       </div>
     </div>

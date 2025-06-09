@@ -1,11 +1,4 @@
 /* Container wraps the whole ParosGPT page */
-/* .parosgpt-wrapper {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  overflow: hidden;
-} */
-
 .parosgpt-wrapper {
   display: flex;
   flex-direction: column;
@@ -86,3 +79,37 @@
   background-color: #ffffff;
   min-height: 0;
 }
+
+@media (max-width: 768px) {
+  .parosgpt-header {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .parosgpt-logo {
+    width: 60px;
+    height: 60px;
+  }
+
+  .parosgpt-title {
+    font-size: 1.4rem;
+  }
+
+  .new-chat-header-button {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 10px;
+  }
+
+  .parosgpt-header-left {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .parosgpt-header-container {
+    padding: 0.5rem 1rem;
+  }
+}
+

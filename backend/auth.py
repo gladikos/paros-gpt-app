@@ -73,6 +73,7 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         if user is None:
             raise HTTPException(status_code=401, detail="Invalid token")
         return {
+            "id": user.id,
             "name": user.name,
             "surname": user.surname,
             "mobile": user.mobile,
@@ -130,3 +131,21 @@ def get_user_itineraries(token: str = Depends(oauth2_scheme), db: Session = Depe
         }
         for it in itineraries
     ]
+
+@router.delete("/itineraries/{itinerary_id}")
+def delete_itinerary(
+    itinerary_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    itinerary = db.query(Itinerary).filter(
+        Itinerary.id == itinerary_id,
+        Itinerary.user_id == current_user["id"]
+    ).first()
+
+    if not itinerary:
+        raise HTTPException(status_code=404, detail="Itinerary not found")
+
+    db.delete(itinerary)
+    db.commit()
+    return {"detail": "Itinerary deleted successfully"}

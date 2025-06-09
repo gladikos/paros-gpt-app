@@ -2,9 +2,12 @@
 import React, { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { FaEye, FaFilePdf } from "react-icons/fa";
+import { FaTrash } from "react-icons/fa";
 import html2pdf from "html2pdf.js";
 import { marked } from "marked";
 import "./ProfilePage.css";
+import axios from "axios";
+
 
 function ProfilePage() {
   const [user, setUser] = useState(null);
@@ -12,7 +15,8 @@ function ProfilePage() {
   const [showSummary, setShowSummary] = useState(true);
   const [showItineraries, setShowItineraries] = useState(false);
   const [expandedItineraryIndex, setExpandedItineraryIndex] = useState(null);
-
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [selectedItineraryId, setSelectedItineraryId] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -52,6 +56,18 @@ function ProfilePage() {
 //             pdf.save(`itinerary-${index + 1}.pdf`);
 //         }
 //     };
+
+const handleDeleteItinerary = async (itineraryId) => {
+  try {
+    const token = localStorage.getItem("token");
+    await axios.delete(`http://localhost:8000/itineraries/${itineraryId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setItineraries((prev) => prev.filter((it) => it.id !== itineraryId));
+  } catch (error) {
+    console.error("Failed to delete itinerary:", error);
+  }
+};
 
 const handleSavePDF = (content, index) => {
   const container = document.createElement("div");
@@ -140,9 +156,22 @@ const handleSavePDF = (content, index) => {
                         </button>
                         <span className="custom-tooltip">Download as PDF</span>
                     </div>
+
+                    <div className="tooltip-wrapper">
+                        <button
+                            className="icon-button"
+                            onClick={() => {
+                                setSelectedItineraryId(it.id); // store the ID
+                                setShowConfirm(true);          // show confirmation box
+                            }}
+                            >
+                            <FaTrash />
+                        </button>
+                        <span className="custom-tooltip">Delete itinerary</span>
+                    </div>
                   </div>
 
-
+                  
 
                     {idx === expandedItineraryIndex && (
                     <div
@@ -159,6 +188,27 @@ const handleSavePDF = (content, index) => {
           </div>
         )}
       </div>
+      {showConfirm && (
+        <div className="confirm-overlay">
+            
+            <div className="confirm-box">
+                <h3>Confirmation</h3>
+                <p>Are you sure you want to delete this itinerary?</p>
+                <div className="confirm-buttons">
+                    <button
+                        onClick={() => {
+                            if (selectedItineraryId !== null) {
+                            handleDeleteItinerary(selectedItineraryId);
+                            }
+                            setShowConfirm(false);
+                            setSelectedItineraryId(null);
+                        }}
+                        >Yes, delete</button>
+                    <button onClick={() => setShowConfirm(false)}>Cancel</button>
+                </div>
+            </div>
+        </div>
+        )}
     </div>
   );
 }

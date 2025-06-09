@@ -244,4 +244,68 @@
   /* color: #fff; */
 }
 
+@media (max-width: 768px) {
+  /* Hide suggestion tags on mobile */
+  .chat-suggestions,
+  .attach-btn {
+    display: none;
+  }
+
+  /* Chat area styling */
+  .chatbox-wrapper {
+    padding: 1rem;
+  }
+
+  .chatbox-container {
+    padding: 1rem;
+  }
+
+  .chat-bubble {
+    max-width: 100%;
+    font-size: 0.95rem;
+    padding: 0.6rem 0.9rem;
+  }
+
+  /* Input section becomes a horizontal row */
+  .chat-input {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .chat-input textarea {
+    font-size: 0.9rem;
+    padding: 0.6rem 0.9rem;
+    flex: 1;
+    resize: none;
+    min-height: 2.6rem;
+    max-height: 4rem;
+  }
+
+  .ask-btn {
+    padding: 0.6rem 1rem;
+    font-size: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .voice-btn {
+    font-size: 1.2rem;
+    padding: 0.4rem;
+    flex-shrink: 0;
+  }
+
+  .file-preview,
+  .file-inline-preview {
+    display: none;
+  }
+
+  .chat-tooltip-wrapper:hover::after {
+    bottom: auto;
+    top: 120%;
+    font-size: 0.7rem;
+  }
+}
+
+
+
 

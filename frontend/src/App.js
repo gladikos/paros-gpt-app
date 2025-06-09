@@ -44,7 +44,7 @@ function AppLayout() {
             aria-label="Open Sidebar"
           >
             ☰
-            <span className="custom-tooltip">Open Sidebar</span>
+            <span className="custom-general-tooltip">Open Sidebar</span>
           </button>
           
         </div>
