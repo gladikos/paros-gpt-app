@@ -28,9 +28,9 @@ cd paros-gpt-app
 
 ```bash```
 <pre> cd backend </pre>
-source venv/bin/activate     # or `source venv/bin/activate.fish` if using fish shell
-pip install -r requirements.txt
-uvicorn main:app --reload
+<pre> source venv/bin/activate     # or `source venv/bin/activate.fish` if using fish shell </pre>
+ <pre> pip install -r requirements.txt </pre>
+<pre> uvicorn main:app --reload </pre>
 
 **The backend runs at: http://localhost:8000**
 
@@ -40,15 +40,23 @@ uvicorn main:app --reload
 OPENAI_API_KEY=your-openai-key-here
 
 ### 💻 3. Run the Frontend (React)
+
+**Make sure you have a .env file inside /backend with:**
+```env```
+PORT=3001
+
 Open a second terminal tab (or split terminal in VS Code):
 
 ```bash```
-cd frontend
-npm install
-npm start
+<pre> cd frontend </pre>
+<pre> npm install </pre>
+<pre> npm start </pre>
 
-**The frontend runs at: http://localhost:3000 (⚠️ or http://localhost:3001 if port 3000 is already in use)**
+**The frontend runs at: http://localhost:3001 (⚠️ or http://localhost:3000 if port 3001 is already in use)**
+
 
 👨‍💻 Author
+
 George Ladikos
+
 github.com/gladikos
