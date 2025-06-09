@@ -1,0 +1,175 @@
+/* ProfilePage.css */
+
+.profile-container {
+  max-width: 960px;
+  background: linear-gradient(to bottom right, #c6e8fa, #9dbedc);
+  margin: 0 auto;
+  padding: 3rem 2rem;
+  color: #ffffff;
+  font-family: "Segoe UI", sans-serif;
+  animation: fadeIn 0.5s ease-in-out;
+  margin-top: 3rem;
+  border-radius: 30px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
+}
+
+.profile-header {
+  font-size: 2.8rem;
+  margin-bottom: 2.5rem;
+  text-align: center;
+  font-weight: 700;
+  color: #003e66;
+}
+
+.section {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(16px);
+  padding: 2rem;
+  border-radius: 20px;
+  margin-bottom: 2.5rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+  color: #003e66;
+}
+
+.section-header h2 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #003e66;
+}
+
+.section-header button {
+  background: radial-gradient(circle at center, #0077cc, #004080);
+  border: none;
+  font-size: 1.2rem;
+  color: white;
+  cursor: pointer;
+  padding: 0.4rem 0.8rem;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(0, 119, 204, 0.5);
+  transition: all 0.3s ease;
+}
+
+.section-header button:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 20px rgba(0, 119, 204, 0.9), 0 0 40px rgba(0, 119, 204, 0.6);
+  background: radial-gradient(circle at center, #00b4ff, #0066cc);
+}
+
+.section-content p {
+  margin: 0.5rem 0;
+  font-size: 1rem;
+  color: #003e66;
+  line-height: 1.6;
+}
+
+.itinerary-card {
+  background: rgba(255, 255, 255, 0.06);
+  padding: 1rem 1.5rem;
+  border-radius: 14px;
+  margin-bottom: 1.5rem;
+  border-left: 4px solid #00b4d8;
+  color: #003e66;
+  position: relative;
+}
+
+.itinerary-card h4 {
+  margin-top: 0;
+  color: #003e66;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.itinerary-card pre {
+  white-space: pre-wrap;
+  font-size: 0.95rem;
+  color: #003e66;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 1rem;
+  border-radius: 12px;
+  margin-top: 0.5rem;
+}
+
+.itinerary-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.icon-button {
+  background: transparent;
+  border: none;
+  color: #0077cc;
+  font-size: 1.6rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.icon-button:hover {
+  transform: scale(1.2);
+  color: #004080;
+}
+
+.tooltip-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.custom-tooltip {
+  position: absolute;
+  top: 110%; /* places it just below the button */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #002b5c; /* dark blue */
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+}
+
+.tooltip-wrapper:hover .custom-tooltip {
+  opacity: 1;
+  visibility: visible;
+  top: 95%; /* pull it up slightly to overlap */
+}
+
+
+.itinerary-pdf-content {
+  padding: 2rem;
+  background-color: white;
+  color: #000;
+  font-size: 14px;
+  line-height: 1.6;
+  border-radius: 12px;
+  margin-top: 1rem;
+  width: 100%;
+  max-width: 700px;
+}
+
+@media print {
+  .itinerary-pdf-content {
+    page-break-inside: avoid;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}

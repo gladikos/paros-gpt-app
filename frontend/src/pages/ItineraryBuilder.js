@@ -3,8 +3,8 @@ import "./ItineraryBuilder.css";
 import ReactMarkdown from "react-markdown";
 import { FaFilePdf } from "react-icons/fa";
 import { FaChevronUp, FaChevronDown } from "react-icons/fa";
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
+// import jsPDF from "jspdf";
+// import html2canvas from "html2canvas";
 import axios from "axios";
 
 const ItineraryBuilder = () => {
@@ -80,6 +80,24 @@ const ItineraryBuilder = () => {
 const handleExportToPDF = () => {
   alert("PDF export functionality will be added soon.");
 };
+
+const handleSaveItinerary = async () => {
+  const token = localStorage.getItem("token");
+
+  try {
+    await axios.post("http://localhost:8000/save-itinerary", {
+      ...formData,
+      content: output.itinerary,
+    }, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    alert("Itinerary saved to your profile!");
+  } catch (err) {
+    alert("Failed to save itinerary. Please try again.");
+  }
+};
+
 
   return (
     <div className="page-container">
@@ -179,11 +197,18 @@ const handleExportToPDF = () => {
                 <div style={{ display: "flex", gap: "0.5rem" }}>
 
                   <div className="tooltip-container">
+                    <button className="open-btn" onClick={handleSaveItinerary}>
+                      <FaFilePdf size={20} style={{ marginRight: "0rem" }} />
+                    </button>
+                    <span className="tooltip-text">Save this itinerary to your profile</span>
+                  </div>
+
+                  {/* <div className="tooltip-container">
                     <button className="open-btn" onClick={handleExportToPDF}>
                       <FaFilePdf size={20} style={{ marginRight: "0rem" }} />
                     </button>
                     <span className="tooltip-text">Download your itinerary as PDF</span>
-                  </div>
+                  </div> */}
 
                   <div className="tooltip-container">
                     <button className="open-btn" onClick={() => setOutputExpanded((prev) => !prev)}>

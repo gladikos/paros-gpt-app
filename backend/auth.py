@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
-from models import Base, User, get_db, engine
+from models import Base, User, Itinerary, get_db, engine
 
 SECRET_KEY = "supersecretkey"  # Replace later with env var
 ALGORITHM = "HS256"
@@ -33,7 +33,7 @@ def verify_password(plain, hashed):
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
-    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=15))
+    expire = datetime.utcnow() + (expires_delta or timedelta(days=2))
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
@@ -80,3 +80,53 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         }
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
+
+@router.post("/save-itinerary")
+def save_itinerary(itinerary: dict, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    email = payload.get("sub")
+    user = db.query(User).filter(User.email == email).first()
+
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+    new_itinerary = Itinerary(
+        user_id=user.id,
+        days=itinerary["days"],
+        adults=itinerary["adults"],
+        children=itinerary["children"],
+        transportation=itinerary["transportation"],
+        age_range=itinerary["ageRange"],
+        budget=itinerary["budget"],
+        priorities=itinerary["priorities"],
+        content=itinerary["content"]
+    )
+    db.add(new_itinerary)
+    db.commit()
+    return {"message": "Itinerary saved"}
+
+@router.get("/user/itineraries")
+def get_user_itineraries(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    email = payload.get("sub")
+    user = db.query(User).filter(User.email == email).first()
+
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+    itineraries = db.query(Itinerary).filter(Itinerary.user_id == user.id).all()
+    return [
+        {
+            "id": it.id,
+            "days": it.days,
+            "adults": it.adults,
+            "children": it.children,
+            "transportation": it.transportation,
+            "ageRange": it.age_range,
+            "budget": it.budget,
+            "priorities": it.priorities,
+            "content": it.content,
+            "createdAt": it.created_at.isoformat()
+        }
+        for it in itineraries
+    ]
