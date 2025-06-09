@@ -42,6 +42,7 @@ OPENAI_API_KEY=your-openai-key-here
 ### 💻 3. Run the Frontend (React)
 
 **Make sure you have a .env file inside /backend with:**
+
 ```env```
 PORT=3001
 
@@ -55,8 +56,8 @@ Open a second terminal tab (or split terminal in VS Code):
 **The frontend runs at: http://localhost:3001 (⚠️ or http://localhost:3000 if port 3001 is already in use)**
 
 
-👨‍💻 Author
+👨‍💻 **Author**
 
-George Ladikos
+**George Ladikos**
 
 github.com/gladikos
