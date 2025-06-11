@@ -18,10 +18,14 @@
 
 .profile-header {
   font-size: 2rem;
-  margin-bottom: 0rem;
+  margin-bottom: 1rem;
   text-align: center;
   font-weight: 700;
   color: #003e66;
+  background-image: url('/public/sea-background.jpg');
+  background-size: cover;
+  background-position: center;
+  border-radius: 16px;
 }
 
 .avatar-title {
@@ -40,6 +44,9 @@
   border: 3px solid #003e66;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
   transition: transform 0.2s ease;
+  filter: brightness(0) saturate(100%) invert(21%) sepia(63%) saturate(1094%) hue-rotate(170deg) brightness(97%) contrast(96%);
+
+  /* background-color: #003e66; */
 }
 
 .profile-avatar:hover {

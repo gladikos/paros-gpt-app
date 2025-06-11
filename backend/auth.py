@@ -33,7 +33,7 @@ def verify_password(plain, hashed):
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
-    expire = datetime.utcnow() + (expires_delta or timedelta(days=2))
+    expire = datetime.utcnow() + (expires_delta or timedelta(days=30))
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
