@@ -17,12 +17,140 @@
 }
 
 .profile-header {
-  font-size: 2.8rem;
-  margin-bottom: 2.5rem;
+  font-size: 2rem;
+  margin-bottom: 0rem;
   text-align: center;
   font-weight: 700;
   color: #003e66;
 }
+
+.avatar-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+}
+
+.profile-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  cursor: pointer;
+  object-fit: cover;
+  border: 3px solid #003e66;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease;
+}
+
+.profile-avatar:hover {
+  /* transform: scale(1.1); */
+  background-color: rgba(0, 0, 0, 0.3); /* translucent gray */
+  transition: background-color 0.3s ease;
+}
+
+.avatar-popup {
+  position: absolute;
+  top: 94%;
+  left: 50%;
+  transform: translate(-50%, 10px);
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  display: grid;
+  grid-template-columns: repeat(4, 60px);
+  gap: 1rem;
+  z-index: 20;
+}
+
+.avatar-popup img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #0077cc;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.avatar-popup img:hover {
+  transform: scale(1.15);
+  border-color: #00b4ff;
+}
+
+.close-avatar-popup {
+  position: absolute;
+  top: 6px;
+  right: 2px;
+  background: transparent;
+  border: none;
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #333;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.close-avatar-popup:hover {
+  color: #007dd0;
+}
+
+.avatar-container {
+  position: relative;
+  display: inline-block;
+}
+
+.avatar-option {
+  position: relative;
+  display: inline-block;
+}
+
+.avatar-option .avatar-tooltip {
+  visibility: hidden;
+  background-color: #1d3557;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 25;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.avatar-option:hover .avatar-tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* .avatar-options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.avatar-option {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+  object-fit: cover;
+  border: 2px solid #0077cc;
+  transition: transform 0.2s ease, border-color 0.2s;
+}
+
+.avatar-option:hover {
+  transform: scale(1.15);
+  border-color: #00b4ff;
+} */
 
 .section {
   background: rgba(255, 255, 255, 0.1);
@@ -150,7 +278,7 @@
 .tooltip-wrapper:hover .custom-tooltip {
   opacity: 1;
   visibility: visible;
-  top: 95%; /* pull it up slightly to overlap */
+  top: 105%; /* pull it up slightly to overlap */
 }
 
 

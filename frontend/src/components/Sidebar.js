@@ -1,4 +1,5 @@
 import React from "react";
+import { useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 // import { IoHome } from "react-icons/io5";
 import { useAuth } from "../AuthContext";
@@ -19,6 +20,21 @@ function Sidebar({ isOpen, onClose }) {
       navigate("/login");
   };
 
+  const [avatar, setAvatar] = useState(
+    localStorage.getItem("selectedAvatar") || "user-icon.png"
+  );
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const updated = localStorage.getItem("selectedAvatar") || "user-icon.png";
+      setAvatar(updated);
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
   return (
     <div className={`sidebar ${isOpen ? "show" : "hidden"}`}>
       <div className="sidebar-content">
@@ -31,8 +47,13 @@ function Sidebar({ isOpen, onClose }) {
           <button className="sidebar-close-btn" onClick={onClose}>×</button>
         </div>
 
-        <NavLink to="/profile" className={isActive("/profile")}>
+        {/* <NavLink to="/profile" className={isActive("/profile")}>
           <img src="user-icon.png" alt="User Logo" className="link-icon" />
+          <span className="link-text">Profile</span>
+        </NavLink> */}
+
+        <NavLink to="/profile" className={isActive("/profile")}>
+          <img src={`/avatars/${avatar}`} alt="User Logo" className="link-icon" />
           <span className="link-text">Profile</span>
         </NavLink>
 

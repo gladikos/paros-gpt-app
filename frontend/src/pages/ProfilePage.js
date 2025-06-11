@@ -1,5 +1,5 @@
 // ProfilePage.js
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import { FaEye, FaFilePdf } from "react-icons/fa";
 import { FaTrash, FaUser, FaMapMarkedAlt } from "react-icons/fa";
@@ -17,6 +17,58 @@ function ProfilePage() {
   const [expandedItineraryIndex, setExpandedItineraryIndex] = useState(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const [selectedItineraryId, setSelectedItineraryId] = useState(null);
+
+  // const avatarOptions = [
+  // "old-man.png",
+  // "old-woman.png",
+  // "man.png",
+  // "woman.png",
+  // "young-man.png",
+  // "young-woman.png",
+  // "boy.png",
+  // "girl.png",
+  // "user-icon.png"
+  // ];
+
+  const avatarOptions = [
+    { file: "old-man.png", label: "Grandpa" },
+    { file: "old-woman.png", label: "Grandma" },
+    { file: "man.png", label: "Father" },
+    { file: "woman.png", label: "Mother" },
+    { file: "young-man.png", label: "Teenage son" },
+    { file: "young-woman.png", label: "Teenage daughter" },
+    { file: "boy.png", label: "Son" },
+    { file: "girl.png", label: "Daughter" },
+    { file: "user-icon.png", label: "Default" },
+  ];
+  const [avatar, setAvatar] = useState("user-icon.png");
+  const [showAvatars, setShowAvatars] = useState(false);
+
+  const popupRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (popupRef.current && !popupRef.current.contains(event.target)) {
+        setShowAvatars(false);
+      }
+    };
+
+    if (showAvatars) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showAvatars]);
+
+  // Load avatar from localStorage on page load
+  useEffect(() => {
+    const savedAvatar = localStorage.getItem("selectedAvatar");
+    if (savedAvatar) {
+      setAvatar(savedAvatar);
+    }
+  }, []);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -39,23 +91,6 @@ function ProfilePage() {
     fetchItineraries();
 
   }, []);
-
-//   const handleSavePDF = async (itineraryContent, index) => {
-//         const pdf = new jsPDF("p", "pt", "a4");
-//         const element = document.getElementById(`itinerary-content-${index}`);
-
-//         if (element) {
-//             const canvas = await html2canvas(element, { scale: 2 });
-//             const imgData = canvas.toDataURL("image/png");
-
-//             const imgProps = pdf.getImageProperties(imgData);
-//             const pdfWidth = pdf.internal.pageSize.getWidth();
-//             const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-//             pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-//             pdf.save(`itinerary-${index + 1}.pdf`);
-//         }
-//     };
 
 const handleDeleteItinerary = async (itineraryId) => {
   try {
@@ -90,7 +125,65 @@ const handleSavePDF = (content, index) => {
 
   return (
     <div className="profile-container">
-      <h1 className="profile-header">Profile Page</h1>
+
+      <div className="profile-header">
+        <div className="avatar-title">
+          <div className="avatar-container">
+            <div className="tooltip-wrapper">
+              <img
+                src={`/avatars/${avatar}`}
+                alt="Avatar"
+                className="profile-avatar"
+                onClick={() => setShowAvatars(!showAvatars)}
+              />
+              <span className="custom-tooltip">Click to edit avatar</span>
+            </div>
+
+            {showAvatars && (
+              <div className="avatar-popup" ref={popupRef}>
+                <button className="close-avatar-popup" onClick={() => setShowAvatars(false)}>×</button>
+                {avatarOptions.map(({ file, label })  => (
+                  <div key={file} className="avatar-option">
+                    <img
+                      key={file}
+                      src={`/avatars/${file}`}
+                      alt={label}
+                      onClick={() => {
+                        setAvatar(file);
+                        localStorage.setItem("selectedAvatar", file);
+                        window.dispatchEvent(new Event("storage")); // update sidebar
+                        setShowAvatars(false);
+                      }}
+                    />
+                    <span className="avatar-tooltip">{label}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <h1>Profile Page</h1>
+        </div>
+        {/* {showAvatars && (
+          <div className="avatar-options">
+            {avatarOptions.map((opt) => (
+              <img
+                key={opt}
+                src={`/avatars/${opt}`}
+                alt={opt}
+                className="avatar-option"
+                onClick={() => {
+                  setAvatar(opt);
+                  localStorage.setItem("selectedAvatar", opt);
+                  window.dispatchEvent(new Event("storage"));  // 🚀 force sidebar to refresh
+                  setShowAvatars(false);
+                }}
+              />
+            ))}
+          </div>
+        )} */}
+      </div>
+
 
       <div className="section">
         <div className="section-header">
