@@ -80,7 +80,7 @@ body {
 .weather-forecast-section {
   display: flex;
   gap: 2rem;
-  overflow-x: auto;
+  overflow-x: scroll;
   padding: 1rem 1rem 2rem;
   margin-bottom: 3rem;
   scroll-behavior: smooth;
@@ -137,7 +137,7 @@ body {
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 
 .forecast-card:hover {

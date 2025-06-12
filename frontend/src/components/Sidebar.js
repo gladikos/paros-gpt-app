@@ -106,7 +106,7 @@ function Sidebar({ isOpen, onClose }) {
 
 
         <div className="sidebar-footer">
-          Powered by <a className="queryble-link" href="https://queryble.ai">Queryble</a>
+          Powered by <a className="queryble-link" href="https://queryble.com">Queryble</a>
         </div>
       </div>
     </div>
