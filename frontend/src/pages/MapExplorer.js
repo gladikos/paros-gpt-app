@@ -1,202 +1,528 @@
-import React, { useState, useEffect } from "react";
-import { Tooltip } from "react-leaflet"; // make sure this import is at the top
-import { MapContainer, TileLayer, Marker, Popup, Polyline } from "react-leaflet";
-import L from "leaflet";
-import Sidebar from "../components/Sidebar";
+import React, { useState, useEffect, useRef } from "react";
+import {
+  GoogleMap,
+  Marker,
+  useJsApiLoader,
+  InfoWindow,
+  Polyline,
+} from "@react-google-maps/api";
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+} from "@hello-pangea/dnd";
+import { FaRoute } from "react-icons/fa";
+import { RxReset } from "react-icons/rx";
+import { CgDetailsMore } from "react-icons/cg";
+import { IoIosRemoveCircleOutline, IoIosAddCircleOutline } from "react-icons/io";
+import { RiPinDistanceFill } from "react-icons/ri";
+import { CiTimer } from "react-icons/ci";
+import { RiUserLocationFill } from "react-icons/ri";
+import { FaCar } from "react-icons/fa";
+import { FaPersonWalking } from "react-icons/fa6";
+import { FaUmbrellaBeach } from "react-icons/fa";
+import { MdOutlineRestaurant } from "react-icons/md";
+import { MdOutlineLocalBar } from "react-icons/md";
+import { PiDiscoBall } from "react-icons/pi";
+import { TbBuildingMonument } from "react-icons/tb";
+import { FiSunset } from "react-icons/fi";
+import { RxReload } from "react-icons/rx";
 import "./MapExplorer.css";
 
-const DEFAULT_CENTER = [37.0833, 25.15];
-const activityOptions = ["Beaches", "Eating", "Drinking", "Cultural", "Sunset Spots"];
+const center = { lat: 37.0557, lng: 25.2079 };
+const activityOptions = [
+  { label: "Beaches", icon: <FaUmbrellaBeach /> },
+  { label: "Food", icon: <MdOutlineRestaurant /> },
+  { label: "Bars", icon: <MdOutlineLocalBar /> },
+  { label: "Clubs", icon: <PiDiscoBall /> },
+  { label: "Cultural", icon: <TbBuildingMonument /> },
+  { label: "Sunsets", icon: <FiSunset /> },
+];
 
-const haversineDistance = (coord1, coord2) => {
-  const R = 6371; // Earth's radius in km
-  const dLat = ((coord2[0] - coord1[0]) * Math.PI) / 180;
-  const dLon = ((coord2[1] - coord1[1]) * Math.PI) / 180;
-  const lat1 = (coord1[0] * Math.PI) / 180;
-  const lat2 = (coord2[0] * Math.PI) / 180;
-
-  const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2;
-
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
-};
+const libraries = ["places"];
 
 const MapExplorer = () => {
-  const [activity, setActivity] = useState("Beaches");
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [activity, setActivity] = useState("");
   const [places, setPlaces] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [selectedPlaceIndex, setSelectedPlaceIndex] = useState(null);
+  const [customInterest, setCustomInterest] = useState("");
   const [userLocation, setUserLocation] = useState(null);
-//   const [includeUserInRoute, setIncludeUserInRoute] = useState(true);
-  const [routePoints, setRoutePoints] = useState([]);
+  const [showUserInfo, setShowUserInfo] = useState(false);
+  const [multiRouteStops, setMultiRouteStops] = useState([]);
+  const [multiRoutePath, setMultiRoutePath] = useState([]);
+  const [multiRouteSummary, setMultiRouteSummary] = useState(null);
+  const [multiRouteId, setMultiRouteId] = useState(0);
+  const [routeLegs, setRouteLegs] = useState([]);
+  const [travelMode, setTravelMode] = useState("DRIVING");
+  const [mapResetKey, setMapResetKey] = useState(0);
+
+  const mapRef = useRef(null);
+
+  const onMapLoad = (mapInstance) => {
+    mapRef.current = mapInstance;
+  };
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition(
-      (pos) => setUserLocation([pos.coords.latitude, pos.coords.longitude]),
-      (err) => console.warn("Location access denied.", err)
-    );
+    if (mapRef.current) {
+      window.google.maps.event.trigger(mapRef.current, "resize");
+      mapRef.current.panTo(center); // Optional: re-center if it's shifted
+    }
+  }, [sidebarOpen]);
+
+
+  const resetMap = () => {
+    window.location.reload();
+  };
+
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
+    libraries,
+  });
+
+  const tripDetailsRef = useRef(null);
+  useEffect(() => {
+    if (multiRouteSummary && tripDetailsRef.current) {
+      tripDetailsRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [multiRouteSummary]);
+
+  // useEffect(() => {
+  //   if (tripDetails && tripDetailsRef.current) {
+  //     tripDetailsRef.current.scrollIntoView({ behavior: "smooth" });
+  //   }
+  // }, [tripDetails]);
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          });
+        },
+        (error) => {
+          console.warn("Geolocation error:", error);
+        }
+      );
+    } else {
+      console.warn("Geolocation not supported");
+    }
   }, []);
 
-  const handleActivityClick = (selected) => {
-    setActivity(selected);
+  const handleActivityClick = (type) => {
+    setActivity(type);
   };
 
   const handleSearch = async () => {
     setLoading(true);
     setPlaces([]);
-    setRoutePoints([]);
 
     try {
       const response = await fetch("http://127.0.0.1:8000/map_explorer", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams({ activity }),
+        body: new URLSearchParams({ activity: customInterest || activity }),
       });
 
       const data = await response.json();
+      const lines = data.answer.split("\n").filter(Boolean);
 
-      const parsed = data.answer
-        .split("\n")
-        .map((line) => {
-          const match = line.match(/^(.*?)\s*-\s*(.*?)\s*\(([-.\d]+),\s*([-.\d]+)\)$/);
+      const geocoder = new window.google.maps.Geocoder();
+      const results = await Promise.all(
+        lines.map((line) => {
+          const match = line.match(/^(.*?)\s*-\s*(.*?)$/);
           if (!match) return null;
-          return {
-            name: match[1].trim(),
-            description: match[2].trim(),
-            lat: parseFloat(match[3]),
-            lng: parseFloat(match[4]),
-          };
-        })
-        .filter(Boolean);
 
-      setPlaces(parsed);
+          const [_, name, description] = match;
+          return new Promise((resolve) => {
+            geocoder.geocode({ address: `${name}, Paros, Greece` }, (results, status) => {
+              if (status === "OK" && results[0]) {
+                const result = results[0];
+                const locationType = result.geometry.location_type;
+                const loc = result.geometry.location;
+                const lat = loc.lat();
+                const lng = loc.lng();
+
+                const isAcceptable =
+                  locationType === "ROOFTOP" || locationType === "GEOMETRIC_CENTER";
+
+                if (isAcceptable) {
+                  resolve({
+                    name: name.trim(),
+                    description: description.trim(),
+                    lat,
+                    lng,
+                  });
+                } else {
+                  console.warn(
+                    `Filtered vague result (${locationType}) for "${name}" at ${lat}, ${lng}`
+                  );
+                  resolve(null);
+                }
+              }
+            });
+          });
+        })
+      );
+
+      setPlaces(results.filter(Boolean));
     } catch (err) {
-      console.error(err);
+      console.error("Error fetching places:", err);
     }
 
     setLoading(false);
   };
 
-  const addToRoute = (coords) => {
-    setRoutePoints((prev) => [...prev, coords]);
+  const formatDuration = (totalSeconds) => {
+    const totalMinutes = Math.round(totalSeconds / 60);
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+
+    return `${hours > 0 ? `${hours} hour${hours > 1 ? "s" : ""} ` : ""}${minutes} min${minutes !== 1 ? "s" : ""}`;
   };
 
-  const fullRoute = userLocation ? [userLocation, ...routePoints] : routePoints;
 
-  const totalDistance = fullRoute.reduce((sum, curr, i, arr) => {
-    if (i === 0) return 0;
-    return sum + haversineDistance(arr[i - 1], curr);
-  }, 0);
+  const calculateMultiRoute = (stops) => {
+    if (!userLocation || stops.length === 0) return;
 
-  const estimatedMinutes = Math.round((totalDistance / 30) * 60); // assuming 30 km/h average driving
+    const directionsService = new window.google.maps.DirectionsService();
 
-  const removeFromRoute = (coords) => {
-    setRoutePoints((prev) =>
-        prev.filter(([lat, lng]) => lat !== coords[0] || lng !== coords[1])
+    const waypoints = stops.slice(0, -1).map((stop) => ({
+      location: { lat: stop.lat, lng: stop.lng },
+      stopover: true,
+    }));
+
+    const finalDestination = stops[stops.length - 1];
+
+    directionsService.route(
+      {
+        origin: userLocation,
+        destination: { lat: finalDestination.lat, lng: finalDestination.lng },
+        waypoints,
+        travelMode: window.google.maps.TravelMode[travelMode],
+        optimizeWaypoints: false,
+      },
+      (result, status) => {
+        if (status === "OK") {
+          const routePath = result.routes[0].overview_path;
+          const totalDistance = result.routes[0].legs.reduce(
+            (sum, leg) => sum + leg.distance.value,
+            0
+          );
+          const totalDuration = result.routes[0].legs.reduce(
+            (sum, leg) => sum + leg.duration.value,
+            0
+          );
+
+          setMultiRoutePath(routePath);
+          setMultiRouteId(id => id + 1);
+          setMultiRouteSummary({
+            distance: (totalDistance / 1000).toFixed(1) + " km",
+            duration: formatDuration(totalDuration),
+            stops: stops.map((p) => p.name),
+          });
+          setRouteLegs(result.routes[0].legs);
+        } else {
+          console.warn("Multi-route error:", status);
+        }
+      }
     );
   };
 
-  const resetMap = () => {
-    setPlaces([]);
-    setRoutePoints([]);
-    setActivity("Beaches");
+  const addToRoute = (place) => {
+    if (!multiRouteStops.some((p) => p.name === place.name)) {
+      const updatedStops = [...multiRouteStops, place];
+      setMultiRouteStops(updatedStops);
+      calculateMultiRoute(updatedStops);
+    }
   };
 
+  const removeStop = (indexToRemove) => {
+    const updatedStops = multiRouteStops.filter((_, idx) => idx !== indexToRemove);
+    setMultiRouteStops(updatedStops);
+    if (updatedStops.length > 0) {
+      calculateMultiRoute(updatedStops);
+    } else {
+      setMultiRoutePath([]);
+      setMultiRouteSummary(null);
+      setMultiRouteId(id => id + 1);
+    }
+  };
 
+  if (!isLoaded) return <div className="loading-screen">Loading map...</div>;
 
   return (
     <div className="mapexplorer-container">
-      <Sidebar />
       <div className="mapexplorer-main">
-        <div className="mapexplorer-header">
+        <header className="mapexplorer-header">
           <div className="mapexplorer-title">
-            <img
-                src="/map-explorer-icon.png"
-                alt="Map Explorer"
-                className="mapexplorer-icon"
-            />
-            <h1>Explore Paros</h1>
+            <img src="/map-explorer-icon.png" alt="Map Explorer" className="mapexplorer-icon" />
+            <h1>Map Explorer</h1>
+          </div>
+          <div className="search-toolbar">
+            <p>Choose places you would like to search for, or type your own interest</p>
+            <button className="reset-map-button" onClick={resetMap}><RxReset /> Reset Map</button>
           </div>
 
-          <p>Select your vibe and discover places on the map</p>
+
           <div className="mapexplorer-chips">
-            {activityOptions.map((option) => (
+            {activityOptions.map(({ label, icon }) => (
               <button
-                key={option}
-                className={`chip ${option === activity ? "active" : ""}`}
-                onClick={() => handleActivityClick(option)}
+                key={label}
+                className={`chip ${activity === label ? "active" : ""}`}
+                onClick={() => handleActivityClick(label)}
               >
-                {option}
+                {icon} {label}
               </button>
+              
             ))}
+
+            <div className="floating-input">
+              <input
+                type="text"
+                value={customInterest}
+                onChange={(e) => setCustomInterest(e.target.value)}
+                id="customInterest"
+                placeholder=" "
+              />
+              <label htmlFor="customInterest">Your own interest</label>
+            </div>
+
             <button className="chip action" onClick={handleSearch} disabled={loading}>
-              {loading ? "Thinking..." : "Show Places"}
+              {loading ? "Searching..." : "Show Places"}
             </button>
-            <button className="chip reset" onClick={resetMap}>
-                Reset Map
-            </button>
-
           </div>
-        </div>
+        </header>
 
-        <div className="mapexplorer-map">
-          <MapContainer center={DEFAULT_CENTER} zoom={11} scrollWheelZoom={true}>
-            <TileLayer
-              attribution="© OpenStreetMap contributors"
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-
+        <div style={{ height: "70vh", width: "100%", position: "relative" }}>
+          <GoogleMap
+            key={multiRouteId}
+            center={center}
+            zoom={12}
+            mapContainerStyle={{ width: "100%", height: "100%" }}
+            onLoad={onMapLoad}
+          >
             {userLocation && (
+              <>
                 <Marker
+                  position={userLocation}
+                  icon={{
+                    url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+                    scaledSize: new window.google.maps.Size(40, 40),
+                  }}
+                  onClick={() => setShowUserInfo(true)}
+                />
+
+                {showUserInfo && (
+                  <InfoWindow
                     position={userLocation}
-                    icon={L.icon({ iconUrl: "/user-location-icon.png", iconSize: [32, 32] })}
-                >
-                <Tooltip direction="top" offset={[0, -10]} opacity={1} permanent>
-                    You are here
-                    </Tooltip>
-                </Marker>
+                    onCloseClick={() => setShowUserInfo(false)}
+                  >
+                    <div className="info-box">
+                      <div className="info-title">📍 Your current location</div>
+                    </div>
+                  </InfoWindow>
+                )}
+              </>
             )}
 
+            {places.map((place, idx) => (
+              <Marker
+                key={idx}
+                position={{ lat: place.lat, lng: place.lng }}
+                title={place.name}
+                onClick={() => setSelectedPlaceIndex(idx)}
+              />
+            ))}
 
-            {places.map((place, idx) => {
-              const coords = [place.lat, place.lng];
-              return (
-                <Marker
-                  key={idx}
-                  position={coords}
-                  icon={L.icon({ iconUrl: "/dst-location-icon.png", iconSize: [32, 32] })}
-                >
-                  <Popup>
-                    <strong>{place.name}</strong>
-                    <br />
-                    {place.description}
-                    <br />
-                    <button className="route-button" onClick={() => addToRoute(coords)}>
-                        Add to Route
-                    </button>
-                    <br />
-                    <button className="route-button" onClick={() => removeFromRoute(coords)}>
-                        Remove from Route
-                    </button>
-                  </Popup>
-                </Marker>
-              );
-            })}
+            {selectedPlaceIndex !== null && (
+              <InfoWindow
+                position={{
+                  lat: places[selectedPlaceIndex].lat,
+                  lng: places[selectedPlaceIndex].lng,
+                }}
+                onCloseClick={() => setSelectedPlaceIndex(null)}
+              >
+                <div>
+                  <div className="info-box">
+                    <div className="info-title">{places[selectedPlaceIndex].name}</div>
+                    <div className="info-description">{places[selectedPlaceIndex].description}</div>
+                  </div>
+                  <div className="route-buttons">
+                    {!multiRouteStops.some(p => p.name === places[selectedPlaceIndex].name) ? (
+                      <button
+                        className="route-button add"
+                        onClick={() => addToRoute(places[selectedPlaceIndex])}
+                      >
+                        <IoIosAddCircleOutline /> Add to Route
+                      </button>
+                    ) : (
+                      <button
+                        className="route-button remove"
+                        onClick={() => {
+                          const index = multiRouteStops.findIndex(
+                            (p) => p.name === places[selectedPlaceIndex].name
+                          );
+                          if (index !== -1) removeStop(index);
+                        }}
+                      >
+                        <IoIosRemoveCircleOutline /> Remove from Route
+                      </button>
+                    )}
+                  </div>
 
-            {fullRoute.length >= 2 && (
+                </div>
+              </InfoWindow>
+
+
+            )}
+
+            {multiRoutePath.length > 0 && (
               <Polyline
-                positions={fullRoute}
-                pathOptions={{ color: "#ff5722", weight: 4, dashArray: "6" }}
+                key={multiRouteId}
+                path={multiRoutePath}
+                options={{
+                  strokeColor: "#0077cc",
+                  strokeOpacity: 0.8,
+                  strokeWeight: 4,
+                  // icons: [
+                  //   {
+                  //     icon: {
+                  //       path: window.google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+                  //     },
+                  //     offset: "100%",
+                  //   },
+                  // ],
+                }}
               />
             )}
-          </MapContainer>
+
+          </GoogleMap>
         </div>
-        {fullRoute.length >= 2 && (
-            <div className="route-info">
-              Total Distance: {totalDistance.toFixed(2)} km · Est. Time: {estimatedMinutes} min (assuming average speed of driving 30km/h)
+
+        <div ref={tripDetailsRef} className="trip-details-wrapper">
+          {multiRouteSummary && (
+            <div className="trip-details">
+              <h2><CgDetailsMore /> Multi-Stop Trip</h2>
+
+              <div className="stop-cards">
+                {/* <div className="stop-card origin">
+                  <span className="stop-number"><RiUserLocationFill /></span>
+                  <span className="stop-name">Your Location</span>
+                </div> */}
+
+                <DragDropContext
+                  onDragEnd={(result) => {
+                    const { destination, source } = result;
+                    if (!destination || destination.index === source.index) return;
+
+                    const reordered = Array.from(multiRouteStops);
+                    const [moved] = reordered.splice(source.index, 1);
+                    reordered.splice(destination.index, 0, moved);
+
+                    setMultiRouteStops(reordered);
+                    calculateMultiRoute(reordered);
+                  }}
+                >
+                  <Droppable droppableId="stops">
+                    {(provided) => (
+                      <div
+                        className="stop-cards"
+                        {...provided.droppableProps}
+                        ref={provided.innerRef}
+                      >
+                        <div className="stop-card origin">
+                          <span className="stop-number"><RiUserLocationFill /></span>
+                          <span className="stop-name">Your Location</span>
+                        </div>
+
+                        {multiRouteStops.map((stop, index) => (
+                          <Draggable key={stop.name} draggableId={stop.name} index={index}>
+                            {(provided) => (
+                              <div
+                                className="stop-card"
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                              >
+                                <span className="stop-number">{index + 1}</span>
+                                <span className="stop-name">{stop.name}</span>
+                              </div>
+                            )}
+                          </Draggable>
+                        ))}
+
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
+                </DragDropContext>
+
+              </div>
+
+              <div className="trip-summary-row">
+                <div className="trip-meta">
+                  <span className="trip-metric">
+                    <RiPinDistanceFill /> Total Distance: <strong>{multiRouteSummary?.distance}</strong>
+                  </span>
+                  <span className="trip-metric">
+                    <CiTimer /> Total Duration: <strong>{multiRouteSummary?.duration}</strong>
+                  </span>
+                </div>
+
+                <div className="trip-controls-horizontal">
+                  <div className="travel-mode-toggle">
+                    <label>
+                      <input
+                        type="radio"
+                        value="DRIVING"
+                        checked={travelMode === "DRIVING"}
+                        onChange={(e) => setTravelMode(e.target.value)}
+                      />
+                      <FaCar size={20} />
+                    </label>
+                    <label>
+                      <input
+                        type="radio"
+                        value="WALKING"
+                        checked={travelMode === "WALKING"}
+                        onChange={(e) => setTravelMode(e.target.value)}
+                      />
+                      <FaPersonWalking size={20} />
+                    </label>
+                  </div>
+
+                  <button
+                    className="recalc-button-inline"
+                    onClick={() => calculateMultiRoute(multiRouteStops)}
+                  >
+                    <RxReload /> Recalculate
+                  </button>
+                </div>
+              </div>
+
+              {routeLegs.length > 0 && (
+                <div className="trip-segments">
+                  <h3>Segment Details</h3>
+                  <ul>
+                    {routeLegs.map((leg, index) => (
+                      <li key={index}>
+                        <strong>{index === 0 ? "From your location" : `Stop ${index}`}</strong> to{" "}
+                        <strong>{`Stop ${index + 1}`}</strong>:{" "}
+                        {leg.distance.text}, {leg.duration.text}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
             </div>
           )}
+        </div>
+
       </div>
     </div>
   );

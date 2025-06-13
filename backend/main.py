@@ -176,10 +176,11 @@ async def map_explorer(activity: str = Form(...)):
     system_prompt = (
         "You are a helpful travel assistant specialized in Paros, Greece. "
         "Given an activity type (like beaches, eating, drinking, etc.), "
-        "suggest exactly 10 places in Paros. "
-        "Each suggestion must be in the following format, **on its own line**:\n\n"
-        "Name - Short description (latitude, longitude)\n\n"
-        "Only return the list, no introduction or closing sentence."
+        "suggest exactly 10 **well-known and real** places in Paros. "
+        "Each suggestion **must** be in the exact format below (each on its own line):\n\n"
+        "Name - Description\n\n"
+        "Ensure the coordinates are accurate and on Paros island. "
+        "Do not include locations in the sea or outside Paros. Only return the list."
     )
 
     user_prompt = f"Suggest 10 places in Paros for the activity: {activity}"
@@ -191,7 +192,7 @@ async def map_explorer(activity: str = Form(...)):
             {"role": "user", "content": user_prompt},
         ]
     )
-
+    print(response.choices[0].message.content)
     return {"answer": response.choices[0].message.content}
 
 class ReviewRequest(BaseModel):
