@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../AuthContext";
 import "./LoginRegister.css";
+import { Navigate } from "react-router-dom";
 
 function LoginPage() {
   const { login } = useAuth();
@@ -10,6 +11,8 @@ function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
+  const { user } = useAuth();
+  if (user) return <Navigate to="/profile" replace />;
 
   const handleLogin = async (e) => {
     e.preventDefault();

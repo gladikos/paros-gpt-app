@@ -66,7 +66,8 @@ function AppLayout() {
       <div className="main-content-wrapper">
         <div className={`main-content ${!sidebarOpen ? "sidebar-hidden" : ""}`}>
           <Routes>
-            <Route path="/" element={<PrivateRoute element={<ProfilePage />} />} />
+            <Route path="/" element={user ? <Navigate to="/profile" replace /> : <Navigate to="/login" replace />} />
+            <Route path="/profile" element={<PrivateRoute element={<ProfilePage />} />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/home" element={<PrivateRoute element={<Home />} />} />
