@@ -52,12 +52,12 @@ function Sidebar({ isOpen, onClose }) {
           <span className="link-text">Profile</span>
         </NavLink> */}
 
-        <NavLink to="/profile" className={isActive("/profile")}>
+        <NavLink to="/" className={isActive("/")}>
           <img src={`/avatars/${avatar}`} alt="User Logo" className="link-icon" />
           <span className="link-text">Profile</span>
         </NavLink>
 
-        <NavLink to="/" className={isActive("/")}>
+        <NavLink to="/home" className={isActive("/home")}>
           <img src="home-icon-small.png" alt="Home Logo" className="link-icon" />
           <span className="link-text">Home</span>
         </NavLink>

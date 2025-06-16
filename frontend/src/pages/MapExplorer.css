@@ -485,5 +485,38 @@
   cursor: pointer;
 }
 
+.profile-notification {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background-color: #f0f0f0;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: opacity 0.3s ease;
+}
+
+.profile-notification.success {
+  background-color: #e7fbe8;
+  color: #207520;
+}
+
+.profile-notification.error {
+  background-color: #fdeaea;
+  color: #c0392b;
+}
+
+.dismiss-button {
+  cursor: pointer;
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
 
 

@@ -12,7 +12,7 @@
   color: #ffffff;
   font-family: "Segoe UI", sans-serif;
   animation: fadeIn 0.5s ease-in-out;
-  margin-top: 3rem;
+  margin-top: 0rem;
   border-radius: 30px;
   box-shadow: 0 8px 80px rgba(0, 0, 0, 0.4);
 }
@@ -137,31 +137,9 @@
   opacity: 1;
 }
 
-/* .avatar-options {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.8rem;
-  margin-top: 1rem;
-}
-
-.avatar-option {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  cursor: pointer;
-  object-fit: cover;
-  border: 2px solid #0077cc;
-  transition: transform 0.2s ease, border-color 0.2s;
-}
-
-.avatar-option:hover {
-  transform: scale(1.15);
-  border-color: #00b4ff;
-} */
-
 .section {
-  background: rgba(255, 255, 255, 0.1);
+  /* background: rgba(65, 169, 255, 0.3); */
+  background: linear-gradient(to bottom right, #c6e8fa, #9dbedc);
   backdrop-filter: blur(16px);
   padding: 2rem;
   border-radius: 20px;
@@ -180,6 +158,17 @@
   color: #003e66;
 }
 
+.section-header-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.section-header-text h2 svg {
+  vertical-align: middle;
+  margin-bottom: 6px; /* fine-tune based on visual preference */
+}
+
 .section-header h2 {
   margin: 0;
   font-size: 1.8rem;
@@ -187,22 +176,31 @@
   color: #003e66;
 }
 
+.section-subtitle {
+  font-size: 0.95rem;
+  color: #777;
+}
+
 .section-header button {
-  background: radial-gradient(circle at center, #0077cc, #004080);
-  border: none;
+  /* background: radial-gradient(circle at center, #0077cc, #004080); */
+  background-color: #003e66;
+  border-width: 2px;
+  border-color: white;
   font-size: 1.2rem;
   color: white;
   cursor: pointer;
   padding: 0.4rem 0.8rem;
-  border-radius: 50%;
+  /* border-radius: 50%; */
+  border-radius: 12px;
   box-shadow: 0 0 10px rgba(0, 119, 204, 0.5);
   transition: all 0.3s ease;
 }
 
 .section-header button:hover {
-  transform: scale(1.2);
-  box-shadow: 0 0 20px rgba(0, 119, 204, 0.9), 0 0 40px rgba(0, 119, 204, 0.6);
-  background: radial-gradient(circle at center, #00b4ff, #0066cc);
+  transform: scale(1.1);
+  /* box-shadow: 0 0 20px rgba(0, 119, 204, 0.9), 0 0 40px rgba(0, 119, 204, 0.6); */
+  /* background: radial-gradient(circle at center, #00b4ff, #0066cc); */
+  background-color: #007fd4;
 }
 
 .section-content p {
@@ -210,6 +208,31 @@
   font-size: 1rem;
   color: #003e66;
   line-height: 1.6;
+}
+
+.user-cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: flex-start;
+  margin-top: 1rem;
+}
+
+.user-card {
+  background: rgba(255, 255, 255, 0.6);
+  padding: 1rem 1.5rem;
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  color: #003e66;
+  font-size: 1rem;
+  min-width: 240px;
+  flex: 1;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.user-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
 }
 
 .itinerary-card {
@@ -368,6 +391,58 @@
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+.notification-popup {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #003e66;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+  font-weight: 500;
+  font-size: 1rem;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease, fadeOut 0.3s ease 2.7s;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-right: 1.2rem;
+}
+
+.notification-popup.success {
+  background-color: #28a745; /* green */
+}
+
+.notification-popup.error {
+  background-color: #dc3545; /* red */
+}
+
+.notification-dismiss {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.4rem;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  margin-left: 0.5rem;
+  transition: color 0.2s ease;
+}
+
+.notification-dismiss:hover {
+  color: #ccc;
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+  }
 }
 
 @media (max-width: 768px) {

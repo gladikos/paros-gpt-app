@@ -27,6 +27,9 @@ import { PiDiscoBall } from "react-icons/pi";
 import { TbBuildingMonument } from "react-icons/tb";
 import { FiSunset } from "react-icons/fi";
 import { RxReload } from "react-icons/rx";
+import { MdFavoriteBorder, MdFavorite } from "react-icons/md";
+import { CiLocationArrow1 } from "react-icons/ci";
+import axios from "axios";
 import "./MapExplorer.css";
 
 const center = { lat: 37.0557, lng: 25.2079 };
@@ -43,20 +46,68 @@ const libraries = ["places"];
 
 const MapExplorer = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [activity, setActivity] = useState("");
-  const [places, setPlaces] = useState([]);
+  // Retrieve from localStorage
+  const getFromStorage = (key, fallback) => {
+    try {
+      const item = localStorage.getItem(key);
+      return item ? JSON.parse(item) : fallback;
+    } catch {
+      return fallback;
+    }
+  };
+  const [activity, setActivity] = useState(getFromStorage("map_activity", ""));
+  const [places, setPlaces] = useState(getFromStorage("map_places", []));
   const [loading, setLoading] = useState(false);
   const [selectedPlaceIndex, setSelectedPlaceIndex] = useState(null);
-  const [customInterest, setCustomInterest] = useState("");
+  const [customInterest, setCustomInterest] = useState(getFromStorage("map_customInterest", ""));
   const [userLocation, setUserLocation] = useState(null);
   const [showUserInfo, setShowUserInfo] = useState(false);
-  const [multiRouteStops, setMultiRouteStops] = useState([]);
-  const [multiRoutePath, setMultiRoutePath] = useState([]);
-  const [multiRouteSummary, setMultiRouteSummary] = useState(null);
+  const [multiRouteStops, setMultiRouteStops] = useState(getFromStorage("map_multiRouteStops", []));
+  const [multiRoutePath, setMultiRoutePath] = useState(getFromStorage("map_multiRoutePath", []));
+  const [multiRouteSummary, setMultiRouteSummary] = useState(getFromStorage("map_multiRouteSummary", null));
   const [multiRouteId, setMultiRouteId] = useState(0);
-  const [routeLegs, setRouteLegs] = useState([]);
-  const [travelMode, setTravelMode] = useState("DRIVING");
+  const [routeLegs, setRouteLegs] = useState(getFromStorage("map_routeLegs", []));
+  const [travelMode, setTravelMode] = useState(getFromStorage("map_travelMode", "DRIVING"));
   const [mapResetKey, setMapResetKey] = useState(0);
+  const [favorites, setFavorites] = useState(getFromStorage("map_favorites", []));
+  const [notification, setNotification] = useState(null);
+
+  // Save changes to localStorage
+  useEffect(() => {
+    localStorage.setItem("map_activity", JSON.stringify(activity));
+  }, [activity]);
+
+  useEffect(() => {
+    localStorage.setItem("map_customInterest", JSON.stringify(customInterest));
+  }, [customInterest]);
+
+  useEffect(() => {
+    localStorage.setItem("map_places", JSON.stringify(places));
+  }, [places]);
+
+  useEffect(() => {
+    localStorage.setItem("map_multiRouteStops", JSON.stringify(multiRouteStops));
+  }, [multiRouteStops]);
+
+  useEffect(() => {
+    localStorage.setItem("map_multiRoutePath", JSON.stringify(multiRoutePath));
+  }, [multiRoutePath]);
+
+  useEffect(() => {
+    localStorage.setItem("map_multiRouteSummary", JSON.stringify(multiRouteSummary));
+  }, [multiRouteSummary]);
+
+  useEffect(() => {
+    localStorage.setItem("map_routeLegs", JSON.stringify(routeLegs));
+  }, [routeLegs]);
+
+  useEffect(() => {
+    localStorage.setItem("map_travelMode", JSON.stringify(travelMode));
+  }, [travelMode]);
+
+  useEffect(() => {
+    localStorage.setItem("map_favorites", JSON.stringify(favorites));
+  }, [favorites]);
 
   const mapRef = useRef(null);
 
@@ -73,6 +124,18 @@ const MapExplorer = () => {
 
 
   const resetMap = () => {
+    const keysToRemove = [
+    "map_activity",
+    "map_places",
+    "map_customInterest",
+    "map_multiRouteStops",
+    "map_multiRoutePath",
+    "map_multiRouteSummary",
+    "map_routeLegs",
+    "map_travelMode",
+    "map_favorites"
+  ];
+  keysToRemove.forEach((key) => localStorage.removeItem(key));
     window.location.reload();
   };
 
@@ -87,12 +150,6 @@ const MapExplorer = () => {
       tripDetailsRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [multiRouteSummary]);
-
-  // useEffect(() => {
-  //   if (tripDetails && tripDetailsRef.current) {
-  //     tripDetailsRef.current.scrollIntoView({ behavior: "smooth" });
-  //   }
-  // }, [tripDetails]);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -112,9 +169,29 @@ const MapExplorer = () => {
     }
   }, []);
 
+  const fetchFavorites = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const res = await axios.get("http://localhost:8000/user/favorites", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setFavorites(res.data);
+    } catch (err) {
+      console.error("Failed to fetch favorites", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchFavorites();
+  }, []);
+
+
+
   const handleActivityClick = (type) => {
     setActivity(type);
   };
+
+  const stripPrefixNumber = (name) => name.replace(/^[\d]+\.?\s*/, "").trim();
 
   const handleSearch = async () => {
     setLoading(true);
@@ -136,7 +213,8 @@ const MapExplorer = () => {
           const match = line.match(/^(.*?)\s*-\s*(.*?)$/);
           if (!match) return null;
 
-          const [_, name, description] = match;
+          let [_, rawName, description] = match;
+          const name = stripPrefixNumber(rawName);
           return new Promise((resolve) => {
             geocoder.geocode({ address: `${name}, Paros, Greece` }, (results, status) => {
               if (status === "OK" && results[0]) {
@@ -169,6 +247,7 @@ const MapExplorer = () => {
       );
 
       setPlaces(results.filter(Boolean));
+      await fetchFavorites(); // ✅ update after places loaded
     } catch (err) {
       console.error("Error fetching places:", err);
     }
@@ -252,6 +331,65 @@ const MapExplorer = () => {
     }
   };
 
+  const saveToFavorites = async (place) => {
+    const token = localStorage.getItem("token");
+    try {
+      await axios.post("http://localhost:8000/save-favorite", {
+        name: place.name,
+        description: place.description,
+        latitude: place.lat,
+        longitude: place.lng,
+      }, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      // Re-fetch favorites to get the updated list with DB-assigned IDs
+      const updated = await axios.get("http://localhost:8000/user/favorites", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setFavorites(updated.data);
+
+      showNotification("Saved to favorites!", "success");
+    } catch (err) {
+      console.error("Failed to save favorite", err);
+      alert("Failed to save. Try again.");
+    }
+  };
+
+  const deleteFavorite = async (place) => {
+    const token = localStorage.getItem("token");
+    try {
+      const res = await axios.get("http://localhost:8000/user/favorites", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const favToDelete = res.data.find(
+        (f) =>
+          f.name === place.name &&
+          Math.abs(f.latitude - place.lat) < 0.0001 &&
+          Math.abs(f.longitude - place.lng) < 0.0001
+      );
+      if (favToDelete) {
+        await axios.delete(`http://localhost:8000/favorites/${favToDelete.id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setFavorites((prev) =>
+          prev.filter((f) => f.id !== favToDelete.id)
+        );
+      }
+      showNotification("Removed from favorites!", "success");
+    } catch (err) {
+      console.error("Failed to remove favorite", err);
+    }
+  };
+
+  const showNotification = (message, type = "success") => {
+    setNotification({ message, type });
+    setTimeout(() => {
+      setNotification(null);
+    }, 20000);
+  };
+
+
   if (!isLoaded) return <div className="loading-screen">Loading map...</div>;
 
   return (
@@ -322,7 +460,7 @@ const MapExplorer = () => {
                     onCloseClick={() => setShowUserInfo(false)}
                   >
                     <div className="info-box">
-                      <div className="info-title">📍 Your current location</div>
+                      <div className="info-title"><CiLocationArrow1 size={20}/> Your current location</div>
                     </div>
                   </InfoWindow>
                 )}
@@ -357,7 +495,7 @@ const MapExplorer = () => {
                         className="route-button add"
                         onClick={() => addToRoute(places[selectedPlaceIndex])}
                       >
-                        <IoIosAddCircleOutline /> Add to Route
+                        <IoIosAddCircleOutline size={20}/> Add to Route
                       </button>
                     ) : (
                       <button
@@ -369,9 +507,29 @@ const MapExplorer = () => {
                           if (index !== -1) removeStop(index);
                         }}
                       >
-                        <IoIosRemoveCircleOutline /> Remove from Route
+                        <IoIosRemoveCircleOutline size={20}/> Remove from Route
                       </button>
                     )}
+                    {favorites.some(f =>
+                      f.name === places[selectedPlaceIndex].name &&
+                      Math.abs(f.latitude - places[selectedPlaceIndex].lat) < 0.0001 &&
+                      Math.abs(f.longitude - places[selectedPlaceIndex].lng) < 0.0001
+                    ) ? (
+                      <button
+                        className="route-button remove"
+                        onClick={() => deleteFavorite(places[selectedPlaceIndex])}
+                      >
+                        <MdFavorite size={20} /> Remove Favourite
+                      </button>
+                    ) : (
+                      <button
+                        className="route-button"
+                        onClick={() => saveToFavorites(places[selectedPlaceIndex])}
+                      >
+                        <MdFavoriteBorder size={20}/> Favourite
+                      </button>
+                    )}
+
                   </div>
 
                 </div>
@@ -522,6 +680,17 @@ const MapExplorer = () => {
             </div>
           )}
         </div>
+        {notification && (
+          <div className={`profile-notification ${notification.type}`}>
+            {notification.message}
+            <span
+              className="dismiss-button"
+              onClick={() => setNotification(null)}
+            >
+              &times;
+            </span>
+          </div>
+        )}
 
       </div>
     </div>

@@ -1,6 +1,7 @@
 .sidebar {
   width: var(--sidebar-width);
-  background-color: #a8d6f5;
+  /* background-color: #a8d6f5; */
+  background: linear-gradient(to bottom right, #c6e8fa, #9dbedc);
   height: 100vh;
   padding: 2rem 1rem;
   box-sizing: border-box;

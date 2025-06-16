@@ -2,7 +2,9 @@
 import React, { useEffect, useState, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import { FaEye, FaFilePdf } from "react-icons/fa";
-import { FaTrash, FaUser, FaMapMarkedAlt } from "react-icons/fa";
+import { FaTrash, FaUser, FaMapMarkedAlt, FaSearchLocation } from "react-icons/fa";
+import { MdFavorite } from "react-icons/md";
+import { IoMdClose } from "react-icons/io";
 import html2pdf from "html2pdf.js";
 import { marked } from "marked";
 import "./ProfilePage.css";
@@ -17,18 +19,11 @@ function ProfilePage() {
   const [expandedItineraryIndex, setExpandedItineraryIndex] = useState(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const [selectedItineraryId, setSelectedItineraryId] = useState(null);
-
-  // const avatarOptions = [
-  // "old-man.png",
-  // "old-woman.png",
-  // "man.png",
-  // "woman.png",
-  // "young-man.png",
-  // "young-woman.png",
-  // "boy.png",
-  // "girl.png",
-  // "user-icon.png"
-  // ];
+  const [favorites, setFavorites] = useState([]);
+  const [showFavorites, setShowFavorites] = useState(false);
+  const [showConfirmFavorite, setShowConfirmFavorite] = useState(false);
+  const [selectedFavoriteId, setSelectedFavoriteId] = useState(null);
+  const [notification, setNotification] = useState({ message: "", type: "" });
 
   const avatarOptions = [
     { file: "old-man.png", label: "Grandpa" },
@@ -71,9 +66,10 @@ function ProfilePage() {
   }, []);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    // const token = localStorage.getItem("token");
 
     const fetchProfile = async () => {
+      const token = localStorage.getItem("token");
       const res = await fetch("http://localhost:8000/me", {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -81,14 +77,24 @@ function ProfilePage() {
     };
 
     const fetchItineraries = async () => {
+      const token = localStorage.getItem("token");
       const res = await fetch("http://localhost:8000/user/itineraries", {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) setItineraries(await res.json());
     };
 
+    const fetchFavorites = async () => {
+      const token = localStorage.getItem("token");
+      const res = await fetch("http://localhost:8000/user/favorites", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) setFavorites(await res.json());
+    };
+
     fetchProfile();
     fetchItineraries();
+    fetchFavorites();
 
   }, []);
 
@@ -99,10 +105,28 @@ const handleDeleteItinerary = async (itineraryId) => {
       headers: { Authorization: `Bearer ${token}` },
     });
     setItineraries((prev) => prev.filter((it) => it.id !== itineraryId));
+    showNotification("Itinerary deleted successfully", "success");
   } catch (error) {
-    console.error("Failed to delete itinerary:", error);
+    showNotification("Failed to delete", "error");
   }
 };
+
+const confirmDeleteFavorite = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    await axios.delete(`http://localhost:8000/favorites/${selectedFavoriteId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setFavorites((prev) => prev.filter((f) => f.id !== selectedFavoriteId));
+    showNotification("Favorite deleted successfully", "success");
+  } catch (err) {
+    showNotification("Failed to delete", "error");
+  } finally {
+    setShowConfirmFavorite(false);
+    setSelectedFavoriteId(null);
+  }
+};
+
 
 const handleSavePDF = (content, index) => {
   const container = document.createElement("div");
@@ -122,6 +146,15 @@ const handleSavePDF = (content, index) => {
 
   html2pdf().set(opt).from(container).save();
 };
+
+const showNotification = (message, type = "success") => {
+  setNotification({ message, type });
+
+  setTimeout(() => {
+    setNotification({ message: "", type: "" });
+  }, 20000);
+};
+
 
   return (
     <div className="profile-container">
@@ -164,52 +197,54 @@ const handleSavePDF = (content, index) => {
 
           <h1>Profile Page</h1>
         </div>
-        {/* {showAvatars && (
-          <div className="avatar-options">
-            {avatarOptions.map((opt) => (
-              <img
-                key={opt}
-                src={`/avatars/${opt}`}
-                alt={opt}
-                className="avatar-option"
-                onClick={() => {
-                  setAvatar(opt);
-                  localStorage.setItem("selectedAvatar", opt);
-                  window.dispatchEvent(new Event("storage"));  // 🚀 force sidebar to refresh
-                  setShowAvatars(false);
-                }}
-              />
-            ))}
-          </div>
-        )} */}
       </div>
 
 
       <div className="section">
         <div className="section-header">
-          <h2><FaUser /> User Summary</h2>
-          {/* <h4>Explore your personal information.</h4> */}
+          <div className="section-header-text">
+            <h2><FaUser  size={30}/> User Summary</h2>
+            <p className="section-subtitle">A complete summary of your details.</p>
+          </div>
           <button onClick={() => setShowSummary(!showSummary)}>
             {showSummary ? "▲" : "▼"}
           </button>
         </div>
         {showSummary && user && (
           <div className="section-content">
-            <p><strong>Name:</strong> {user.name} {user.surname}</p>
-            <p><strong>Mobile:</strong> {user.mobile}</p>
-            <p><strong>Email:</strong> {user.email}</p>
+            <div className="user-cards-container">
+              <div className="user-card"><strong>Name:</strong> {user.name} {user.surname}</div>
+              <div className="user-card"><strong>Mobile:</strong> {user.mobile}</div>
+              <div className="user-card"><strong>Email:</strong> {user.email}</div>
+              {user.created_at && (
+                <div className="user-card">
+                  <strong>Member Since:</strong>{" "}
+                  {new Date(user.created_at).toLocaleDateString("en-GB")}
+                </div>
+              )}
+              <div className="user-card">
+                <strong>Saved Itineraries:</strong> {itineraries.length}
+              </div>
+
+              <div className="user-card">
+                <strong>Favorite Places:</strong> {favorites.length}
+              </div>
+            </div>
           </div>
         )}
       </div>
 
       <div className="section">
         <div className="section-header">
-          <h2><FaMapMarkedAlt /> Saved Itineraries</h2>
-          {/* <h4>Explore your saved itineraries. If you want you can download them locally to your computer.</h4> */}
+          <div className="section-header-text">
+            <h2><FaMapMarkedAlt size={35}/> Saved Itineraries ({itineraries.length})</h2>
+            <p className="section-subtitle">These are your custom trips created using the itinerary builder.</p>
+          </div>
           <button onClick={() => setShowItineraries(!showItineraries)}>
             {showItineraries ? "▲" : "▼"}
           </button>
         </div>
+
         {showItineraries && (
           <div className="section-content">
             {itineraries.length === 0 ? (
@@ -281,6 +316,60 @@ const handleSavePDF = (content, index) => {
           </div>
         )}
       </div>
+
+      <div className="section">
+        <div className="section-header">
+          <div className="section-header-text">
+            <h2><MdFavorite size={35}/> Favourite Places ({favorites.length})</h2>
+            <p className="section-subtitle">Your handpicked gems across Paros — saved for easy access.</p>
+          </div>
+          <button onClick={() => setShowFavorites(!showFavorites)}>
+            {showFavorites ? "▲" : "▼"}
+          </button>
+        </div>
+
+        {showFavorites && (
+          <div className="section-content">
+            {favorites.length === 0 ? (
+              <p>No favourite places saved yet.</p>
+            ) : (
+              favorites.map((f, idx) => (
+                <div key={f.id} className="itinerary-card">
+                  <h4>{f.name}</h4>
+                  <p><strong>Description:</strong> {f.description}</p>
+                  <p><strong>Coordinates:</strong> ({f.latitude}, {f.longitude})</p>
+                  <p><strong>Saved:</strong> {new Date(f.created_at).toLocaleDateString()}</p>
+                  <div className="itinerary-buttons">
+                    <div className="tooltip-wrapper">
+                      <button
+                        className="icon-button"
+                        onClick={() => window.open(`https://www.google.com/search?q=${encodeURIComponent(f.name + " Paros")}`, "_blank")}
+                      >
+                        <FaSearchLocation />
+                      </button>
+                      <span className="custom-tooltip">Search for this place online</span>
+                    </div>
+                    <div className="tooltip-wrapper">
+                      <button
+                        className="icon-button"
+                        onClick={() => {
+                          setSelectedFavoriteId(f.id);
+                          setShowConfirmFavorite(true);
+                        }}
+                      >
+                        <FaTrash />
+                      </button>
+                      <span className="custom-tooltip">Remove from favourites</span>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        )}
+      </div>
+
+
       {showConfirm && (
         <div className="confirm-overlay">
             
@@ -301,7 +390,30 @@ const handleSavePDF = (content, index) => {
                 </div>
             </div>
         </div>
-        )}
+      )}
+
+      {showConfirmFavorite && (
+        <div className="confirm-overlay">
+          <div className="confirm-box">
+            <h3>Confirmation</h3>
+            <p>Are you sure you want to remove this place from your favourites?</p>
+            <div className="confirm-buttons">
+              <button onClick={confirmDeleteFavorite}>Yes, remove</button>
+              <button onClick={() => setShowConfirmFavorite(false)}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {notification.message && (
+        <div className={`notification-popup ${notification.type}`}>
+          <span>{notification.message}</span>
+          <button className="notification-dismiss" onClick={() => setNotification({ message: "", type: "" })}>
+            <IoMdClose />
+          </button>
+        </div>
+      )}
+
     </div>
   );
 }

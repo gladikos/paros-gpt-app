@@ -1,5 +1,5 @@
 # auth.py
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import Request, APIRouter, HTTPException, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel
@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
-from models import Base, User, Itinerary, get_db, engine
+from models import Base, User, Itinerary, FavoritePlace, get_db, engine
 
 SECRET_KEY = "supersecretkey"  # Replace later with env var
 ALGORITHM = "HS256"
@@ -77,7 +77,8 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
             "name": user.name,
             "surname": user.surname,
             "mobile": user.mobile,
-            "email": user.email
+            "email": user.email,
+            "created_at": user.created_at.isoformat() if user.created_at else None
         }
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
@@ -149,3 +150,31 @@ def delete_itinerary(
     db.delete(itinerary)
     db.commit()
     return {"detail": "Itinerary deleted successfully"}
+
+@router.post("/save-favorite")
+async def save_favorite(request: Request, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    data = await request.json()
+    new_fav = FavoritePlace(
+        user_id=user["id"],
+        name=data["name"],
+        description=data["description"],
+        latitude=data["latitude"],
+        longitude=data["longitude"],
+    )
+    db.add(new_fav)
+    db.commit()
+    db.refresh(new_fav)
+    return {"message": "Favorite saved"}
+
+@router.get("/user/favorites")
+def get_favorites(user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    return db.query(FavoritePlace).filter_by(user_id=user["id"]).order_by(FavoritePlace.created_at.desc()).all()
+
+@router.delete("/favorites/{fav_id}")
+def delete_favorite(fav_id: int, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    fav = db.query(FavoritePlace).filter_by(id=fav_id, user_id=user["id"]).first()
+    if fav:
+        db.delete(fav)
+        db.commit()
+        return {"message": "Favorite deleted"}
+    raise HTTPException(status_code=404, detail="Not found")

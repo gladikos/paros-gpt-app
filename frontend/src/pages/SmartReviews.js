@@ -12,20 +12,41 @@ const restaurants = [
 
 function SmartReviews() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [result, setResult] = useState(null);
+  const [result, setResult] = useState(() => {
+    const stored = localStorage.getItem("smartreviews_result");
+    return stored ? JSON.parse(stored) : null;
+  });
   const [loading, setLoading] = useState(false);
-  const [expanded, setExpanded] = useState(false);
-  const [activePlace, setActivePlace] = useState(null);
+  const [expanded, setExpanded] = useState(() => {
+    const stored = localStorage.getItem("smartreviews_expanded");
+    return stored === "false" ? false : true;
+  });
+  const [activePlace, setActivePlace] = useState(() => localStorage.getItem("smartreviews_activePlace") || null);
   const reviewRef = useRef(null);
+
   useEffect(() => {
-  setTimeout(() => {
-    window.scrollTo({ top: 0, behavior: "auto" });
-  }, 50);
-}, []);
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: "auto" });
+    }, 50);
+  }, []);
 
   useLayoutEffect(() => {
-  window.scrollTo({ top: 0 });
-}, []);
+    window.scrollTo({ top: 0 });
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("smartreviews_result", JSON.stringify(result));
+  }, [result]);
+
+  useEffect(() => {
+    localStorage.setItem("smartreviews_expanded", expanded);
+  }, [expanded]);
+
+  useEffect(() => {
+    if (activePlace) {
+      localStorage.setItem("smartreviews_activePlace", activePlace);
+    }
+  }, [activePlace]);
 
   const fetchReview = async (place) => {
     if (result?.place === place && !expanded) {
@@ -45,14 +66,15 @@ function SmartReviews() {
 
     const data = await res.json();
 
-    setResult({
+    const reviewData = {
       place,
       pros: data.pros || [],
       cons: data.cons || [],
       summary: data.summary || "",
       rating: data.rating || 4.3,
-    });
+    };
 
+    setResult(reviewData);
     setSearchTerm("");
     setLoading(false);
     setExpanded(true);
@@ -65,7 +87,6 @@ function SmartReviews() {
     }, 100);
   };
 
-
   const toggleReview = () => {
     setExpanded(!expanded);
     if (!expanded && reviewRef.current) {
@@ -73,6 +94,16 @@ function SmartReviews() {
         reviewRef.current.scrollIntoView({ behavior: "smooth" });
       }, 150);
     }
+  };
+
+  const handleReset = () => {
+    setResult(null);
+    setExpanded(true);
+    setSearchTerm("");
+    setActivePlace(null);
+    localStorage.removeItem("smartreviews_result");
+    localStorage.removeItem("smartreviews_expanded");
+    localStorage.removeItem("smartreviews_activePlace");
   };
 
   return (
@@ -114,18 +145,23 @@ function SmartReviews() {
 
       <section className="search-section">
         <h2>Search any place in Paros</h2>
-        <input
-          type="text"
-          placeholder="e.g. Lefkes Tavern"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <button
-          onClick={() => fetchReview(searchTerm)}
-          disabled={!searchTerm || loading}
-        >
-          {loading ? "Loading..." : "Search"}
-        </button>
+        <div className="search-input-button-row">
+          <input
+            type="text"
+            placeholder="e.g. Lefkes Tavern"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <button
+            onClick={() => fetchReview(searchTerm)}
+            disabled={!searchTerm || loading}
+          >
+            {loading ? "Loading..." : "Search"}
+          </button>
+          <button className="reset-btn" onClick={handleReset}>
+            Reset
+          </button>
+        </div>
       </section>
 
       <section ref={reviewRef} className="review-result-section">
@@ -145,31 +181,18 @@ function SmartReviews() {
               <div className="review-result">
                 <h3>📍 {result.place}</h3>
                 <div className="review-pros-cons">
-
                   {result.pros && (
                     <div className="review-box pros">
                       <h4>✅ Pros</h4>
-                      <ul>
-                        {result.pros.map((item, idx) => (
-                          <li key={idx}>{item}</li>
-                        ))}
-                      </ul>
+                      <ul>{result.pros.map((item, idx) => <li key={idx}>{item}</li>)}</ul>
                     </div>
                   )}
-
-
                   {result.cons && (
                     <div className="review-box cons">
                       <h4>❌ Cons</h4>
-                      <ul>
-                        {result.cons.map((item, idx) => (
-                          <li key={idx}>{item}</li>
-                        ))}
-                      </ul>
+                      <ul>{result.cons.map((item, idx) => <li key={idx}>{item}</li>)}</ul>
                     </div>
                   )}
-
-
                 </div>
 
                 {result.summary && (
@@ -179,11 +202,8 @@ function SmartReviews() {
                   </div>
                 )}
 
-
                 <p className="rating">⭐ <strong>Average star rating: {result.rating}</strong> / 5</p>
-                
               </div>
-
             </div>
           </>
         )}

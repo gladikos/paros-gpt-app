@@ -18,50 +18,66 @@ import "./App.css";
 
 function AppLayout() {
   const location = useLocation();
-  const isHiddenPage = ["/", "/login", "/register"].includes(location.pathname);
+  const { user } = useAuth();
 
-  const [sidebarOpen, setSidebarOpen] = useState(!isHiddenPage);
+  const isAuthPage = ["/login", "/register"].includes(location.pathname);
+  const [sidebarOpen, setSidebarOpen] = useState(!isAuthPage);
 
   useEffect(() => {
     const width = sidebarOpen ? "240px" : "0px";
     document.documentElement.style.setProperty("--sidebar-width", width);
   }, [sidebarOpen]);
 
-  const { user } = useAuth();
+  useEffect(() => {
+    // Automatically close sidebar on login/register pages
+    if (isAuthPage && sidebarOpen) {
+      setSidebarOpen(false);
+    }
+  }, [location.pathname]);
 
   const PrivateRoute = ({ element }) => {
     return user ? element : <Navigate to="/login" replace />;
   };
 
+  // Redirect logged-in users away from login/register
+  if (user && isAuthPage) {
+    return <Navigate to="/" replace />;
+  }
+
   return (
     <div className="app-layout">
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      {!sidebarOpen && (
-        <div className="toggle-btn-wrapper">
-          <button
-            className="toggle-btn"
-            onClick={() => setSidebarOpen(true)}
-            aria-label="Open Sidebar"
-          >
-            ☰
-            <span className="custom-general-tooltip">Open Sidebar</span>
-          </button>
-          
-        </div>
+      {!isAuthPage && (
+        <>
+          <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+          {!sidebarOpen && (
+            <div className="toggle-btn-wrapper">
+              <button
+                className="toggle-btn"
+                onClick={() => setSidebarOpen(true)}
+                aria-label="Open Sidebar"
+              >
+                ☰
+                <span className="custom-general-tooltip">Open Sidebar</span>
+              </button>
+            </div>
+          )}
+        </>
       )}
-      <div className={`main-content ${!sidebarOpen ? "sidebar-hidden" : ""}`}>
-        <Routes>
-          <Route path="/" element={<PrivateRoute element={<Home />} />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/profile" element={<PrivateRoute element={<ProfilePage />} />} />
-          <Route path="/parosgpt" element={<PrivateRoute element={<ParosGPT />} />} />
-          <Route path="/itinerarybuilder" element={<PrivateRoute element={<ItineraryBuilder />} />} />
-          <Route path="/smart-guide" element={<PrivateRoute element={<SmartGuide />} />} />
-          <Route path="/map-explorer" element={<PrivateRoute element={<MapExplorer />} />} />
-          <Route path="/weather-forecast" element={<PrivateRoute element={<WeatherForecast />} />} />
-          <Route path="/reviews" element={<PrivateRoute element={<SmartReviews />} />} />
-        </Routes>
+      <div className="main-content-wrapper">
+        <div className={`main-content ${!sidebarOpen ? "sidebar-hidden" : ""}`}>
+          <Routes>
+            <Route path="/" element={<PrivateRoute element={<ProfilePage />} />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/home" element={<PrivateRoute element={<Home />} />} />
+            <Route path="/parosgpt" element={<PrivateRoute element={<ParosGPT />} />} />
+            <Route path="/itinerarybuilder" element={<PrivateRoute element={<ItineraryBuilder />} />} />
+            <Route path="/smart-guide" element={<PrivateRoute element={<SmartGuide />} />} />
+            <Route path="/map-explorer" element={<PrivateRoute element={<MapExplorer />} />} />
+            <Route path="/weather-forecast" element={<PrivateRoute element={<WeatherForecast />} />} />
+            <Route path="/reviews" element={<PrivateRoute element={<SmartReviews />} />} />
+          </Routes>
+        </div>
       </div>
     </div>
   );

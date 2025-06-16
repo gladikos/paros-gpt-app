@@ -1,6 +1,7 @@
 html, body {
-  min-height: 100%;
+  height: 100%;
   overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .smartguide-body {
@@ -16,7 +17,7 @@ html, body {
 .smartguide-container {
   /* height: 90vh; */
   align-items: center;
-  overflow: hidden;
+  /* overflow: hidden; */
   font-family: "Poppins", "Segoe UI", sans-serif;
   background: white;
   color: #000000;
@@ -26,8 +27,10 @@ html, body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow-y: auto;       /* ✅ enable vertical scrolling */
+  overflow-x: hidden;
   padding: 2rem 3rem;
+  -webkit-overflow-scrolling: touch;
 }
 
 .smartguide-title-row {
@@ -71,6 +74,7 @@ html, body {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
+  flex-direction: column;
 }
 
 .smartguide-output {
@@ -123,7 +127,7 @@ html, body {
   font-size: 1rem;
 }
 
-.smartguide-horizontal-form button {
+/* .smartguide-horizontal-form button {
   background: linear-gradient(to right, #0077aa, #009fd4);
   color: white;
   font-weight: bold;
@@ -131,6 +135,40 @@ html, body {
 
 .smartguide-horizontal-form button:hover {
   background: linear-gradient(to right, #005f88, #0077aa);
+  transform: scale(1.03);
+  cursor: pointer;
+} */
+
+.button-row {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0rem;
+}
+
+.sub-btn{
+  background: linear-gradient(to right, #0077aa, #009fd4);
+  color: white;
+  font-weight: bold;
+}
+
+.sub-btn:hover {
+  background: linear-gradient(to right, #005f88, #0077aa);
+  transform: scale(1.03);
+  cursor: pointer;
+}
+
+.reset-btn {
+  background-color: #d0d7dd;;
+  border: 1px solid #ccc;
+  color: #555;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.reset-btn:hover {
+  background-color: #f0f0f0;
   transform: scale(1.03);
   cursor: pointer;
 }
@@ -302,39 +340,53 @@ html, body {
     flex-direction: column;
     gap: 2rem;
     padding: 0 1rem;
-    overflow-y: auto;
   }
 
   .smartguide-main {
     padding: 1rem;
-    overflow-y: auto;
   }
 
-  .smartguide-form {
-    max-width: 100%;
-    padding: 1rem 1rem 1rem 0.5rem;
-  }
-
-  .smartguide-output-wrapper {
-    padding-right: 0;
+  .smartguide-form,
+  .smartguide-horizontal-form {
+    flex-direction: column;
+    padding: 1rem;
+    gap: 1rem;
   }
 
   .smartguide-header h1 {
-    font-size: 2rem;
+    font-size: 1.8rem;
+    text-align: center;
   }
 
   .smartguide-icon {
-    width: 60px;
-    height: 60px;
-  }
-
-  .smartguide-horizontal-form {
-    flex-direction: column;
-    align-items: stretch;
+    width: 50px;
+    height: 50px;
   }
 
   .smartguide-output-header {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .button-row {
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  .button-row button {
+    width: 100%;
+  }
+
+  .smartguide-output {
+    font-size: 0.95rem;
+  }
+
+  .input-wrapper {
+    width: 100%;
+  }
+
+  .input-wrapper label {
+    left: 10px;
   }
 }
