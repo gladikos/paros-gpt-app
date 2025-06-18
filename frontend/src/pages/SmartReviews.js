@@ -1,4 +1,10 @@
 import React, { useState, useRef, useEffect, useLayoutEffect } from "react";
+import { FaSearch } from "react-icons/fa";
+import { FaLocationDot } from "react-icons/fa6";
+import { FaCircleCheck } from "react-icons/fa6";
+import { AiFillCloseCircle } from "react-icons/ai";
+import { MdSummarize } from "react-icons/md";
+import { BsFillStarFill } from "react-icons/bs";
 import "./SmartReviews.css";
 
 const restaurants = [
@@ -119,7 +125,7 @@ function SmartReviews() {
             document.querySelector(".search-section")?.scrollIntoView({ behavior: "smooth" });
           }}
         >
-          🔍 Search
+          <FaSearch /> Search
         </button>
       </header>
 
@@ -179,17 +185,17 @@ function SmartReviews() {
             </div>
             <div className={`review-result-wrapper ${expanded ? "expanded" : ""}`}>
               <div className="review-result">
-                <h3>📍 {result.place}</h3>
+                <h3><FaLocationDot /> {result.place}</h3>
                 <div className="review-pros-cons">
                   {result.pros && (
                     <div className="review-box pros">
-                      <h4>✅ Pros</h4>
+                      <h4><FaCircleCheck /> Pros</h4>
                       <ul>{result.pros.map((item, idx) => <li key={idx}>{item}</li>)}</ul>
                     </div>
                   )}
                   {result.cons && (
                     <div className="review-box cons">
-                      <h4>❌ Cons</h4>
+                      <h4><AiFillCloseCircle size={18}/> Cons</h4>
                       <ul>{result.cons.map((item, idx) => <li key={idx}>{item}</li>)}</ul>
                     </div>
                   )}
@@ -197,12 +203,12 @@ function SmartReviews() {
 
                 {result.summary && (
                   <div className="review-box summary">
-                    <h4>📝 Summary</h4>
+                    <h4><MdSummarize size={20}/> Summary</h4>
                     <p>{result.summary}</p>
                   </div>
                 )}
 
-                <p className="rating">⭐ <strong>Average star rating: {result.rating}</strong> / 5</p>
+                <p className="rating"><BsFillStarFill /> <strong>Average star rating: {result.rating}</strong> / 5</p>
               </div>
             </div>
           </>
