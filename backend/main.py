@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File, Form, APIRouter
+from fastapi import FastAPI, UploadFile, File, Form, APIRouter, HTTPException
 from auth import router as auth_router
 from pydantic import BaseModel
 import os
@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from scrape_ktel import update_knowledge_file_basic_summary
+from quick_services import router as quick_services_router
 from pathlib import Path
 from datetime import datetime, timedelta
 
@@ -16,6 +17,7 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 router = APIRouter()
 
 app = FastAPI()
+app.include_router(quick_services_router)
 app.include_router(auth_router)
 app.add_middleware(
     CORSMiddleware,
@@ -24,6 +26,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+PAROS_LAT = 37.0853
+PAROS_LNG = 25.1500
 
 def get_paros_weather():
     api_key = os.getenv("OPENWEATHER_API_KEY")  # Make sure it's in your .env file

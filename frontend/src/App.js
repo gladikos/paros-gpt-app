@@ -8,6 +8,7 @@ import RegisterPage from "./pages/RegisterPage";
 import Sidebar from "./components/Sidebar";
 import ProfilePage from "./pages/ProfilePage";
 import ParosGPT from "./pages/ParosGPT";
+import QuickServices from "./pages/QuickServices";
 import ItineraryBuilder from "./pages/ItineraryBuilder";
 import SmartGuide from "./pages/SmartGuide";
 import MapExplorer from "./pages/MapExplorer";
@@ -72,6 +73,7 @@ function AppLayout() {
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/home" element={<PrivateRoute element={<Home />} />} />
             <Route path="/parosgpt" element={<PrivateRoute element={<ParosGPT />} />} />
+            <Route path="/quick-services" element={<PrivateRoute element={<QuickServices />} />} />
             <Route path="/itinerarybuilder" element={<PrivateRoute element={<ItineraryBuilder />} />} />
             <Route path="/smart-guide" element={<PrivateRoute element={<SmartGuide />} />} />
             <Route path="/map-explorer" element={<PrivateRoute element={<MapExplorer />} />} />

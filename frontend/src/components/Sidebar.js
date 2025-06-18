@@ -12,6 +12,8 @@ function Sidebar({ isOpen, onClose }) {
   const isActive = (path) =>
     location.pathname === path ? "sidebar-link active" : "sidebar-link";
 
+  const [username, setUsername] = useState(localStorage.getItem("username") || "Profile");
+
   const { logout } = useAuth();
     const navigate = useNavigate();
 
@@ -23,6 +25,17 @@ function Sidebar({ isOpen, onClose }) {
   const [avatar, setAvatar] = useState(
     localStorage.getItem("selectedAvatar") || "user-icon.png"
   );
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const updated = localStorage.getItem("username") || "Profile";
+      setUsername(updated);
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -52,10 +65,10 @@ function Sidebar({ isOpen, onClose }) {
           <span className="link-text">Profile</span>
         </NavLink> */}
 
-        <NavLink to="/" className={isActive("/")}>
+        {/* <NavLink to="/" className={isActive("/")}>
           <img src={`/avatars/${avatar}`} alt="User Logo" className="link-icon" />
           <span className="link-text">Profile</span>
-        </NavLink>
+        </NavLink> */}
 
         <NavLink to="/home" className={isActive("/home")}>
           <img src="home-icon-small.png" alt="Home Logo" className="link-icon" />
@@ -65,6 +78,11 @@ function Sidebar({ isOpen, onClose }) {
         <NavLink to="/parosgpt" className={isActive("/parosgpt")}>
           <img src="parosgpt-logo-transparent.png" alt="ParosGPT Logo" className="link-icon" />
           <span className="link-text">ParosGPT</span>
+        </NavLink>
+
+        <NavLink to="/quick-services" className={isActive("/quick-services")}>
+          <img src="quick-services-icon.png" alt="Quick Services Logo" className="link-icon" />
+          <span className="link-text">Quick Services</span>
         </NavLink>
 
         <NavLink to="/itinerarybuilder" className={isActive("/itinerarybuilder")}>
@@ -93,16 +111,22 @@ function Sidebar({ isOpen, onClose }) {
         </NavLink>
         </div>
 
-        {/* <NavLink to="/itineraryform" className={isActive("/itineraryform")}>
-          <span className="link-text">💬 Component Test</span>
-        </NavLink> */}
+        <NavLink to="/profile" className={isActive("/profile")} style={{ position: "relative" }}>
+          <img src={`/avatars/${avatar}`} alt="User Logo" className="link-icon" />
+          <span className="link-text">{username}</span>
 
-        {/* 🔽 Logout pushed below main links, above footer */}
-        <div className="sidebar-link logout-link" onClick={handleLogout}>
-          <img src="/logout-icon.png" alt="Logout" className="link-icon" />
-          <span className="link-text">Logout</span>
-        </div>
-
+          {/* Logout icon positioned inside the NavLink */}
+          <div
+            className="logout-inside-link tooltip-wrapper"
+            onClick={(e) => {
+              e.preventDefault(); // prevent NavLink navigation
+              handleLogout();
+            }}
+          >
+            <img src="/logout-icon.png" alt="Logout" className="link-icon" />
+            <span className="custom-logout-tooltip">Logout</span>
+          </div>
+        </NavLink>
 
 
         <div className="sidebar-footer">

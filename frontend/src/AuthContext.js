@@ -45,7 +45,10 @@ export function AuthProvider({ children }) {
           },
         });
 
-        if (!res.ok) {
+        if (res.ok) {
+          const data = await res.json();
+          localStorage.setItem("username", data.name);
+        } else {
           logout();
         }
       } catch (err) {
