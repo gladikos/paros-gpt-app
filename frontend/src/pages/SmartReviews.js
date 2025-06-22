@@ -1,23 +1,27 @@
+// SmartReviews.js
 import React, { useState, useRef, useEffect, useLayoutEffect } from "react";
 import { FaSearch } from "react-icons/fa";
+import { RxReset } from "react-icons/rx";
 import { FaLocationDot } from "react-icons/fa6";
-import { FaCircleCheck } from "react-icons/fa6";
-import { AiFillCloseCircle } from "react-icons/ai";
-import { MdSummarize } from "react-icons/md";
 import { BsFillStarFill } from "react-icons/bs";
+import { AiFillCloseCircle } from "react-icons/ai";
+import { MdSummarize, MdOutlineReviews} from "react-icons/md";
+import { MdOutlineEuroSymbol } from "react-icons/md";
+import { ImLocation } from "react-icons/im";
 import "./SmartReviews.css";
 
 const restaurants = [
-  { name: "Barbarossa", images: ["barbarossa-2.jpg", "barbarossa-3.jpg", "barbarossa-1.jpg"] },
-  { name: "Siparos", images: ["siparos-1.jpg", "siparos-2.jpeg", "siparos-3.jpg"] },
-  { name: "Axinos", images: ["axinos-1.jpg", "axinos-2.jpg", "axinos-3.jpg"] },
-  { name: "Marios Restaurant", images: ["marios-1.jpg", "marios-2.png", "marios-3.jpg"] },
-  { name: "Tsachpinis", images: ["tsachpinis-1.jpg", "tsachpinis-2.jpg", "tsachpinis-3.jpg"] },
-  { name: "Flora Restaurant", images: ["flora-1.jpg", "flora-2.jpg", "flora-3.jpg"] },
+  { name: "Barbarossa Paros", images: ["barbarossa-2.jpg", "barbarossa-3.jpg", "barbarossa-1.jpg"] },
+  { name: "Siparos Paros", images: ["siparos-1.jpg", "siparos-2.jpeg", "siparos-3.jpg"] },
+  { name: "Axinos Restaurant Paros", images: ["axinos-1.jpg", "axinos-2.jpg", "axinos-3.jpg"] },
+  { name: "Marios Restaurant Paros", images: ["marios-1.jpg", "marios-2.png", "marios-3.jpg"] },
+  { name: "Tsachpinis Paros", images: ["tsachpinis-1.jpg", "tsachpinis-2.jpg", "tsachpinis-3.jpg"] },
+  { name: "Flora Restaurant Paros", images: ["flora-1.jpg", "flora-2.jpg", "flora-3.jpg"] },
 ];
 
 function SmartReviews() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [showHours, setShowHours] = useState(false);
   const [result, setResult] = useState(() => {
     const stored = localStorage.getItem("smartreviews_result");
     return stored ? JSON.parse(stored) : null;
@@ -29,12 +33,6 @@ function SmartReviews() {
   });
   const [activePlace, setActivePlace] = useState(() => localStorage.getItem("smartreviews_activePlace") || null);
   const reviewRef = useRef(null);
-
-  useEffect(() => {
-    setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: "auto" });
-    }, 50);
-  }, []);
 
   useLayoutEffect(() => {
     window.scrollTo({ top: 0 });
@@ -55,42 +53,47 @@ function SmartReviews() {
   }, [activePlace]);
 
   const fetchReview = async (place) => {
-    if (result?.place === place && !expanded) {
+    if (result?.name === place && !expanded) {
       setExpanded(true);
       return;
     }
-    if (result?.place === place && expanded) return;
+    if (result?.name === place && expanded) return;
 
     setLoading(true);
     setActivePlace(place);
 
-    const res = await fetch("http://localhost:8000/reviews", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ place, type: "restaurant" }),
-    });
+    try {
+      const res = await fetch("http://localhost:8000/google_reviews", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ place }),
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    const reviewData = {
-      place,
-      pros: data.pros || [],
-      cons: data.cons || [],
-      summary: data.summary || "",
-      rating: data.rating || 4.3,
-    };
-
-    setResult(reviewData);
-    setSearchTerm("");
-    setLoading(false);
-    setExpanded(true);
-
-    setTimeout(() => {
-      if (reviewRef.current) {
-        reviewRef.current.scrollIntoView({ behavior: "smooth" });
-        setTimeout(() => window.scrollBy({ top: -200, behavior: "smooth" }), 600);
+      if (data.error) {
+        alert("Place not found.");
+        setLoading(false);
+        return;
       }
-    }, 100);
+
+      setResult(data);
+      console.log(data)
+      setSearchTerm("");
+      setExpanded(true);
+
+      setTimeout(() => {
+        if (reviewRef.current) {
+          reviewRef.current.scrollIntoView({ behavior: "smooth" });
+          setTimeout(() => window.scrollBy({ top: -200, behavior: "smooth" }), 600);
+        }
+      }, 100);
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong.");
+    }
+
+    setLoading(false);
   };
 
   const toggleReview = () => {
@@ -121,11 +124,12 @@ function SmartReviews() {
         </div>
         <button
           className="scroll-to-search"
-          onClick={() => {
-            document.querySelector(".search-section")?.scrollIntoView({ behavior: "smooth" });
-          }}
+          // onClick={() => {
+          //   document.querySelector(".search-section")?.scrollIntoView({ behavior: "smooth" });
+          // }}
+          onClick={handleReset}
         >
-          <FaSearch /> Search
+          <RxReset /> Reset
         </button>
       </header>
 
@@ -149,7 +153,7 @@ function SmartReviews() {
         ))}
       </section>
 
-      <section className="search-section">
+      {/* <section className="search-section">
         <h2>Search any place in Paros</h2>
         <div className="search-input-button-row">
           <input
@@ -168,13 +172,13 @@ function SmartReviews() {
             Reset
           </button>
         </div>
-      </section>
+      </section> */}
 
       <section ref={reviewRef} className="review-result-section">
         {result && (
           <>
             <div className="review-header">
-              <h4>Review Summary</h4>
+              <h4>Google Reviews</h4>
               <button
                 className="collapse-toggle"
                 data-tooltip={expanded ? "Hide results" : "View results"}
@@ -184,31 +188,98 @@ function SmartReviews() {
               </button>
             </div>
             <div className={`review-result-wrapper ${expanded ? "expanded" : ""}`}>
+              
               <div className="review-result">
-                <h3><FaLocationDot /> {result.place}</h3>
-                <div className="review-pros-cons">
-                  {result.pros && (
-                    <div className="review-box pros">
-                      <h4><FaCircleCheck /> Pros</h4>
-                      <ul>{result.pros.map((item, idx) => <li key={idx}>{item}</li>)}</ul>
-                    </div>
-                  )}
-                  {result.cons && (
-                    <div className="review-box cons">
-                      <h4><AiFillCloseCircle size={18}/> Cons</h4>
-                      <ul>{result.cons.map((item, idx) => <li key={idx}>{item}</li>)}</ul>
-                    </div>
-                  )}
-                </div>
+                <h3><FaLocationDot /> {result.name}</h3>
+                <p><strong>Address:</strong> {result.address}</p>
+                {result.phone && <p><strong>Phone:</strong> (+30) {result.phone}</p>}
+                {result.price_level && (
+                  <p><strong>Price:</strong>{" "}
+                    {[...Array(result.price_level)].map((_, i) => (
+                      <MdOutlineEuroSymbol 
+                        key={i}
+                        style={{
+                          marginRight: "0.2rem",
+                          color: "#0077aa",
+                          verticalAlign: "middle", // 👈 aligns better
+                          position: "relative",
+                          top: "0px"                // 👈 nudges it down slightly
+                        }} 
+                      />
+                    ))}
+                  </p>
+                )}
 
+                {result.opening_hours && result.opening_hours.length > 0 && (
+                  <div style={{ marginBottom: "1rem" }}>
+                    <strong>Opening Hours:</strong>{" "}
+                    <button
+                      className="collapse-toggle"
+                      data-tooltip={showHours ? "Hide hours" : "Show hours"}
+                      onClick={() => setShowHours(!showHours)}
+                      style={{ fontSize: "0.9rem", marginLeft: "0.6rem" }}
+                    >
+                      <span>{showHours ? "▲" : "▼"}</span>
+                    </button>
+
+                    {showHours && (
+                      <ul style={{ paddingLeft: "1.2rem", marginTop: "0.6rem" }}>
+                        {result.opening_hours.map((line, idx) => (
+                          <li key={idx}>{line}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                )}
+
+                <p className="rating">
+                  <BsFillStarFill /> Average rating: {result.rating} ({result.total_ratings} reviews)
+                </p>
+                <div className="review-pros-cons">
+                  {result.reviews.map((review, idx) => (
+                    <div className="review-box" key={idx}>
+                      <h4><MdOutlineReviews size={18}/> {review.author}</h4>
+                      <p><BsFillStarFill /> <strong> Rating:</strong> {review.rating} / 5</p>
+                      <p><em>{review.time}</em></p>
+                      <p>{review.text}</p>
+                    </div>
+                  ))}
+                </div>
                 {result.summary && (
-                  <div className="review-box summary">
+                  <div className="review-box summary review-summary-box">
                     <h4><MdSummarize size={20}/> Summary</h4>
                     <p>{result.summary}</p>
                   </div>
                 )}
 
-                <p className="rating"><BsFillStarFill /> <strong>Average star rating: {result.rating}</strong> / 5</p>
+                {/* {result.photos && result.photos.length > 0 && (
+                  <div className="image-scroll" style={{ marginBottom: "1.5rem" }}>
+                    {result.photos.map((url, idx) => (
+                      <img key={idx} src={url} alt={`Photo ${idx + 1}`} />
+                    ))}
+                  </div>
+                )} */}
+                <div style={{ marginTop: "1.5rem" }}>
+                  <a
+                    href={result.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{ marginRight: "1.5rem", color: "#0077aa", fontWeight: "bold" }}
+                  >
+                    <ImLocation /> View on Google Maps
+                  </a>
+                  {result.website && (
+                    <a
+                      href={result.website}
+                      target="_blank"
+                      rel="noreferrer"
+                      style={{ color: "#0077aa", fontWeight: "bold" }}
+                    >
+                      View Website
+                    </a>
+                  )}
+                </div>
+
               </div>
             </div>
           </>

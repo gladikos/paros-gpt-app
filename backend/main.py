@@ -14,6 +14,7 @@ from datetime import datetime, timedelta
 
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+GOOGLE_REVIEW_API_KEY = os.getenv("GOOGLE_REVIEW_API_KEY")
 router = APIRouter()
 
 app = FastAPI()
@@ -114,16 +115,16 @@ async def ask_question(question: str = Form(...), file: UploadFile = File(None))
     answer = response.choices[0].message.content.strip()
     return JSONResponse(content={"answer": answer})
 
-class ItineraryRequest(BaseModel):
-    firstName: str
-    lastName: str
-    arrivalDate: str
-    departureDate: str
-    numPeople: int
-    travelType: str
-    pace: str
-    accessibility: str
-    interests: str
+# class ItineraryRequest(BaseModel):
+#     firstName: str
+#     lastName: str
+#     arrivalDate: str
+#     departureDate: str
+#     numPeople: int
+#     travelType: str
+#     pace: str
+#     accessibility: str
+#     interests: str
 
 class ItineraryRequest(BaseModel):
     days: int
@@ -205,44 +206,85 @@ class ReviewRequest(BaseModel):
     place: str
     type: str
 
-@app.post("/reviews")
-async def get_review_summary(data: ReviewRequest):
-    prompt = (
-        f"You are an expert review summarizer. Summarize user reviews for '{data.place}', a '{data.type}' in Paros, from Google and TripAdvisor.\n\n"
-        # "Search for the place and find any information you can from Google and TripAdvisor to summarize them.\n"
-        "Return ONLY a JSON object in the following format:\n"
-        "{\n"
-        '  "pros": ["(explanative phrase)", "(explanative phrase)", "..."],\n'
-        '  "cons": ["(explanative phrase)", "(explanative phrase)", "..."],\n'
-        '  "rating": float between 0 and 5 coming from TripAdvisor,\n'
-        '  "summary": "a short paragraph (5–6 lines) summarizing the above"\n'
-        "}\n\n"
-        "NO markdown, no comments, no explanations — just the raw JSON object."
+class PlaceRequest(BaseModel):
+    place: str
+
+@app.post("/google_reviews")
+async def get_google_reviews(request: PlaceRequest):
+    search_query = request.place
+
+    # 1. Search for Place ID
+    text_search_url = (
+        f"https://maps.googleapis.com/maps/api/place/textsearch/json"
+        f"?query={search_query}&region=gr&key={GOOGLE_REVIEW_API_KEY}"
     )
+    search_resp = requests.get(text_search_url).json()
 
-    completion = client.chat.completions.create(
-        model="gpt-4o",
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.7,
+    if not search_resp.get("results"):
+        return {"error": "No place found"}
+
+    place_id = search_resp["results"][0]["place_id"]
+
+    # 2. Get Place Details
+    details_url = (
+        f"https://maps.googleapis.com/maps/api/place/details/json"
+        f"?place_id={place_id}&fields=name,rating,user_ratings_total,reviews,formatted_address,url,photos,formatted_phone_number,website,opening_hours,price_level"
+        f"&key={GOOGLE_REVIEW_API_KEY}"
     )
+    details_resp = requests.get(details_url).json()
+    result = details_resp.get("result", {})
 
-    content = completion.choices[0].message.content.strip()
-    print("LLM Output:", content)
+    # 3. Process Photos
+    photo_refs = result.get("photos", [])[:5]
+    photo_urls = [
+        f"https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photoreference={p['photo_reference']}&key={GOOGLE_REVIEW_API_KEY}"
+        for p in photo_refs
+        if p.get("width", 0) > p.get("height", 0)
+    ]
 
-    # Try to parse the JSON from GPT
-    import json, re
+    # 4. Extract Reviews
+    review_list = [
+        {
+            "author": r.get("author_name"),
+            "rating": r.get("rating"),
+            "text": r.get("text"),
+            "time": r.get("relative_time_description")
+        }
+        for r in result.get("reviews", [])[:3]
+    ]
+
+    # 5. Generate Summary via GPT-4o
+    summary = ""
     try:
-        parsed = json.loads(content)
-    except json.JSONDecodeError:
-        # Fallback: remove markdown code block if present
-        cleaned = re.sub(r"^```json|```$", "", content, flags=re.MULTILINE).strip()
-        parsed = json.loads(cleaned)
+        combined_text = " ".join([r["text"] for r in review_list if r["text"]])
+        if combined_text.strip():
+            response = client.chat.completions.create(
+                model="gpt-4o",
+                messages=[
+                    {"role": "system", "content": "You are a helpful assistant that summarizes user reviews into 2-3 sentence overviews."},
+                    {"role": "user", "content": f"Summarize the following reviews for a place in Paros:\n\n{combined_text}"}
+                ],
+                temperature=0.7,
+                max_tokens=150
+            )
+            summary = response.choices[0].message.content.strip()
+    except Exception as e:
+        summary = "No summary available."
 
+    # 6. Return Result
     return {
-        "pros": parsed.get("pros", []),
-        "cons": parsed.get("cons", []),
-        "summary": parsed.get("summary", ""),
-        "rating": round(float(parsed.get("rating", 4.3)), 1)
+        "name": result.get("name"),
+        "address": result.get("formatted_address"),
+        "phone": result.get("formatted_phone_number"),
+        "website": result.get("website"),
+        "price_level": result.get("price_level"),
+        "opening_hours": result.get("opening_hours", {}).get("weekday_text", []),
+        "rating": result.get("rating"),
+        "total_ratings": result.get("user_ratings_total"),
+        "url": result.get("url"),
+        "photos": photo_urls,
+        "summary": summary,
+        "reviews": review_list
     }
 
 

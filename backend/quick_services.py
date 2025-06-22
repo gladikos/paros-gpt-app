@@ -17,7 +17,6 @@ PAROS_LNG = 25.1500
 @router.get("/quick_services")
 def get_quick_services(type: str = Query(...)):
     if not GOOGLE_API_KEY:
-        print("GOOGLE API ERROR:", data)
         raise HTTPException(status_code=500, detail="Missing Google API Key")
 
     url = (
@@ -40,31 +39,31 @@ def get_quick_services(type: str = Query(...)):
     for place in data.get("results", []):
         place_id = place.get("place_id")
 
-        # Fetch phone number from details endpoint
+        # Fetch phone + full address from details endpoint
         phone = None
+        address = place.get("vicinity")  # fallback
         try:
             detail_url = (
                 f"https://maps.googleapis.com/maps/api/place/details/json"
                 f"?place_id={place_id}"
-                f"&fields=formatted_phone_number"
+                f"&fields=formatted_phone_number,formatted_address"
                 f"&key={GOOGLE_API_KEY}"
             )
             detail_res = requests.get(detail_url)
             if detail_res.ok:
                 detail_data = detail_res.json()
                 phone = detail_data.get("result", {}).get("formatted_phone_number")
+                address = detail_data.get("result", {}).get("formatted_address", address)
         except Exception as e:
-            print(f"Failed to fetch phone for {place_id}: {e}")
+            print(f"Failed to fetch details for {place_id}: {e}")
 
         places.append({
             "id": place_id,
             "name": place.get("name"),
-            "address": place.get("vicinity"),
+            "address": address,
             "open_now": place.get("opening_hours", {}).get("open_now"),
             "location": place.get("geometry", {}).get("location"),
             "phone": phone
         })
-
-
 
     return JSONResponse(content=places)

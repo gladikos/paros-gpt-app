@@ -115,15 +115,16 @@ function QuickServices() {
                 <p><strong><GrStatusCriticalSmall /> Status:</strong> {place.open_now ? "🟢 Open" : "🔴 Closed"}</p>
               )}
               <a
-                href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
-                  place.address
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                  place.name
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="directions-btn"
               >
-                <FaDirections /> Get Directions
+                <FaDirections /> Open in Maps
               </a>
+
             </div>
           ))}
         </div>
