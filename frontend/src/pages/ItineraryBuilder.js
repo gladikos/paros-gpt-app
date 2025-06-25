@@ -102,6 +102,7 @@ const ItineraryBuilder = () => {
       });
 
       setOutput(response.data);
+      setOutputExpanded(true);
       setTimeout(() => {
         outputRef.current?.scrollIntoView({ behavior: "smooth" });
       }, 300);

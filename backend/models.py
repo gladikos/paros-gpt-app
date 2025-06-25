@@ -15,11 +15,12 @@ Base = declarative_base()
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, index=True)
+    cognito_id = Column(String, unique=True, index=True)  # <-- use this for login reference
     name = Column(String)
     surname = Column(String)
     mobile = Column(String)
-    email = Column(String, unique=True, index=True)
-    hashed_password = Column(String)
+    email = Column(String, unique=True, nullable=True)
+    # hashed_password = Column(String)
     favorites = relationship("FavoritePlace", back_populates="user")
     created_at = Column(DateTime, default=datetime.utcnow)
 

@@ -1,77 +1,71 @@
-# auth.py
 from fastapi import Request, APIRouter, HTTPException, Depends
-from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
-from jose import JWTError, jwt
-from passlib.context import CryptContext
-from datetime import datetime, timedelta
+from dotenv import load_dotenv
+from jose import jwt, JWTError
 from models import Base, User, Itinerary, FavoritePlace, get_db, engine
+import os
+import requests
+import boto3
 
-SECRET_KEY = "supersecretkey"  # Replace later with env var
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+load_dotenv()
 
 router = APIRouter()
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
 Base.metadata.create_all(bind=engine)
 
-class UserCreate(BaseModel):
-    name: str
-    surname: str
-    mobile: str
-    email: str
-    password: str
+# Cognito setup
+AWS_REGION = os.getenv("AWS_REGION")
+COGNITO_USER_POOL_ID = os.getenv("COGNITO_USER_POOL_ID")
+COGNITO_CLIENT_ID = os.getenv("COGNITO_CLIENT_ID")
+print(AWS_REGION)
+print(COGNITO_USER_POOL_ID)
+print(COGNITO_CLIENT_ID)
+print("----------------------------------------------------------------------------------------------------")
+JWKS_URL = f"https://cognito-idp.{AWS_REGION}.amazonaws.com/{COGNITO_USER_POOL_ID}/.well-known/jwks.json"
+JWKS = requests.get(JWKS_URL).json()
 
-def get_password_hash(password):
-    return pwd_context.hash(password)
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")  # not used anymore but required for FastAPI
 
-def verify_password(plain, hashed):
-    return pwd_context.verify(plain, hashed)
-
-def create_access_token(data: dict, expires_delta: timedelta | None = None):
-    to_encode = data.copy()
-    expire = datetime.utcnow() + (expires_delta or timedelta(days=30))
-    to_encode.update({"exp": expire})
-    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-
-@router.post("/register")
-def register(user: UserCreate, db: Session = Depends(get_db)):
-    if db.query(User).filter(User.email == user.email).first():
-        raise HTTPException(status_code=400, detail="Email already registered")
-    hashed = get_password_hash(user.password)
-    db_user = User(
-        name=user.name,
-        surname=user.surname,
-        mobile=user.mobile,
-        email=user.email,
-        hashed_password=hashed
-    )
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    return {"message": "User created successfully"}
-
-@router.post("/login")
-def login(form: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == form.username).first()
-    if not user or not verify_password(form.password, user.hashed_password):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-    token = create_access_token(data={"sub": user.email})
-    return {"access_token": token, "token_type": "bearer"}
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
-
-@router.get("/me")
+# ✅ Cognito-based token verification
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        email = payload.get("sub")
-        user = db.query(User).filter(User.email == email).first()
-        if user is None:
-            raise HTTPException(status_code=401, detail="Invalid token")
+        headers = jwt.get_unverified_header(token)
+        kid = headers.get("kid")
+
+        key = next((k for k in JWKS["keys"] if k["kid"] == kid), None)
+        if not key:
+            raise HTTPException(status_code=401, detail="Public key not found")
+
+        payload = jwt.decode(
+            token,
+            key,
+            algorithms=["RS256"],
+            audience=COGNITO_CLIENT_ID,
+            issuer=f"https://cognito-idp.{AWS_REGION}.amazonaws.com/{COGNITO_USER_POOL_ID}"
+        )
+
+        # ✅ Use Cognito username (always present and stable)
+        cognito_id = payload.get("username") or payload.get("sub")
+        if not cognito_id:
+            raise HTTPException(status_code=401, detail="No unique identifier in token")
+
+        # 🔍 Find user by Cognito ID
+        user = db.query(User).filter(User.cognito_id == cognito_id).first()
+
+        # 🆕 Auto-create if not found
+        if not user:
+            user = User(
+                        cognito_id=cognito_id,
+                        name=payload.get("name", "Unknown"),
+                        surname=payload.get("family_name", ""),
+                        mobile=payload.get("phone_number", ""),
+                        email=payload.get("email", None),
+                    )
+            db.add(user)
+            db.commit()
+            db.refresh(user)
+
         return {
             "id": user.id,
             "name": user.name,
@@ -80,20 +74,24 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
             "email": user.email,
             "created_at": user.created_at.isoformat() if user.created_at else None
         }
-    except JWTError:
+
+    except JWTError as e:
+        print("DEBUG | JWTError:", e)
         raise HTTPException(status_code=401, detail="Invalid token")
+    except Exception as e:
+        print("DEBUG | Unexpected error:", e)
+        raise HTTPException(status_code=401, detail="Token validation failed")
+
+
+# ✅ Keep all your original endpoints below
+@router.get("/me")
+def get_user_info(user: User = Depends(get_current_user)):
+    return user
 
 @router.post("/save-itinerary")
-def save_itinerary(itinerary: dict, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-    email = payload.get("sub")
-    user = db.query(User).filter(User.email == email).first()
-
-    if not user:
-        raise HTTPException(status_code=401, detail="Invalid token")
-
+def save_itinerary(itinerary: dict, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     new_itinerary = Itinerary(
-        user_id=user.id,
+        user_id=user["id"],
         days=itinerary["days"],
         adults=itinerary["adults"],
         children=itinerary["children"],
@@ -108,15 +106,8 @@ def save_itinerary(itinerary: dict, token: str = Depends(oauth2_scheme), db: Ses
     return {"message": "Itinerary saved"}
 
 @router.get("/user/itineraries")
-def get_user_itineraries(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-    email = payload.get("sub")
-    user = db.query(User).filter(User.email == email).first()
-
-    if not user:
-        raise HTTPException(status_code=401, detail="Invalid token")
-
-    itineraries = db.query(Itinerary).filter(Itinerary.user_id == user.id).all()
+def get_user_itineraries(user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    itineraries = db.query(Itinerary).filter(Itinerary.user_id == user["id"]).all()
     return [
         {
             "id": it.id,

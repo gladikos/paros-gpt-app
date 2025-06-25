@@ -1,77 +1,85 @@
 // LoginPage.js
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import { useAuth } from "../AuthContext";
+import { CognitoUser, AuthenticationDetails } from "amazon-cognito-identity-js";
+import { userPool } from "../cognitoConfig";
 import "./LoginRegister.css";
-import { Navigate } from "react-router-dom";
 
 function LoginPage() {
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
-  const { user } = useAuth();
+
   if (user) return <Navigate to="/profile" replace />;
 
-  const handleLogin = async (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
-    const form = new FormData();
-    form.append("username", email);
-    form.append("password", password);
 
-    const res = await fetch("http://localhost:8000/login", {
-      method: "POST",
-      body: form,
+    const cognitoUser = new CognitoUser({
+      Username: email,
+      Pool: userPool,
     });
 
-    if (res.ok) {
-      const data = await res.json();
-      login(email, data.access_token, remember);
-      navigate("/");
-    } else {
-      alert("Invalid credentials");
-    }
+    const authDetails = new AuthenticationDetails({
+      Username: email,
+      Password: password,
+    });
+
+    cognitoUser.authenticateUser(authDetails, {
+      onSuccess: (result) => {
+        const token = result.getIdToken().getJwtToken();
+        login(email, token, remember);
+        navigate("/");
+      },
+      onFailure: (err) => {
+        alert("Login failed: " + (err.message || JSON.stringify(err)));
+      },
+    });
   };
 
   return (
     <div className="auth-page">
-        <div className="auth-background">
-            <div className="auth-wrapper">
-                <div className="auth-header">
-                  <img src="/paros-mate-logo.png" alt="ParosMate Logo" className="auth-logo" />
-                  <h2>Welcome Back</h2>
-                </div>
-                <form onSubmit={handleLogin}>
-                    <input
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Email"
-                    />
-                    <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Password"
-                    />
-                    <label>
-                    <input
-                        type="checkbox"
-                        checked={remember}
-                        onChange={(e) => setRemember(e.target.checked)}
-                    />
-                    Remember me
-                    </label>
-                    <button type="submit">Log In</button>
-                    <p
-                    onClick={() => navigate("/register")}
-                    className="switch-link"
-                    >
-                    No account? Register here
-                    </p>
-                </form>
-            </div>
+      <div className="auth-background">
+        <div className="auth-wrapper">
+          <div className="auth-header">
+            <img src="/paros-mate-logo.png" alt="ParosMate Logo" className="auth-logo" />
+            <h2>Welcome Back</h2>
+          </div>
+          <form onSubmit={handleLogin}>
+            <input
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email"
+              required
+            />
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+              required
+            />
+            <label>
+              <input
+                type="checkbox"
+                checked={remember}
+                onChange={(e) => setRemember(e.target.checked)}
+              />
+              Remember me
+            </label>
+            <button type="submit">Log In</button>
+            <p
+              onClick={() => navigate("/register")}
+              className="switch-link"
+            >
+              No account? Register here
+            </p>
+          </form>
         </div>
+      </div>
     </div>
   );
 }

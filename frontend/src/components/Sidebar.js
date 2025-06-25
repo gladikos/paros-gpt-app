@@ -27,14 +27,31 @@ function Sidebar({ isOpen, onClose }) {
   );
 
   useEffect(() => {
-    const handleStorageChange = () => {
-      const updated = localStorage.getItem("username") || "Profile";
-      setUsername(updated);
+    const fetchUserInfo = async () => {
+      try {
+        const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+        if (!token) return;
+
+        const res = await fetch("http://localhost:8000/me", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          setUsername(data.name || data.email || "User");
+        } else {
+          console.warn("❌ Failed to fetch user data in Sidebar.");
+        }
+      } catch (err) {
+        console.error("⚠️ Sidebar user fetch error:", err);
+      }
     };
 
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
+    fetchUserInfo();
   }, []);
+
 
 
   useEffect(() => {

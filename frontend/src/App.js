@@ -5,6 +5,7 @@ import { Navigate } from "react-router-dom";
 import { AuthProvider } from "./AuthContext";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import ConfirmPage from "./pages/ConfirmPage";
 import Sidebar from "./components/Sidebar";
 import ProfilePage from "./pages/ProfilePage";
 import ParosGPT from "./pages/ParosGPT";
@@ -71,6 +72,7 @@ function AppLayout() {
             <Route path="/profile" element={<PrivateRoute element={<ProfilePage />} />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/confirm" element={<ConfirmPage />} />
             <Route path="/home" element={<PrivateRoute element={<Home />} />} />
             <Route path="/parosgpt" element={<PrivateRoute element={<ParosGPT />} />} />
             <Route path="/quick-services" element={<PrivateRoute element={<QuickServices />} />} />

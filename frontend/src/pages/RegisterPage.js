@@ -1,6 +1,8 @@
 // RegisterPage.js
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { CognitoUserAttribute } from "amazon-cognito-identity-js";
+import { userPool } from "../cognitoConfig";
 import "./LoginRegister.css";
 
 function RegisterPage() {
@@ -21,27 +23,28 @@ function RegisterPage() {
     }));
   };
 
-  const handleRegister = async (e) => {
+  const handleRegister = (e) => {
     e.preventDefault();
 
-    try {
-      const res = await fetch("http://localhost:8000/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+    const { name, surname, mobile, email, password } = formData;
 
-      if (res.ok) {
-        alert("Account created! You can now log in.");
-        navigate("/login");
-      } else {
-        const error = await res.json();
-        alert(error.detail || "Registration failed.");
+    const attributeList = [
+      new CognitoUserAttribute({ Name: "name", Value: name }),
+      new CognitoUserAttribute({ Name: "given_name", Value: name }),
+      new CognitoUserAttribute({ Name: "family_name", Value: surname }),
+      new CognitoUserAttribute({ Name: "phone_number", Value: mobile }), // Format: +30xxxxxxxxxx
+      new CognitoUserAttribute({ Name: "birthdate", Value: "1990-01-01" }), // Placeholder if required
+    ];
+
+    userPool.signUp(email, password, attributeList, null, (err, result) => {
+      if (err) {
+        alert(err.message || JSON.stringify(err));
+        return;
       }
-    } catch (err) {
-      console.error(err);
-      alert("Something went wrong. Try again.");
-    }
+
+      alert("Registered! Check your email for confirmation.");
+      navigate("/confirm");
+    });
   };
 
   return (
@@ -91,7 +94,10 @@ function RegisterPage() {
               required
             />
             <button type="submit">Register</button>
-            <p onClick={() => navigate("/login")} className="switch-link">
+            <p
+              onClick={() => navigate("/login")}
+              className="switch-link"
+            >
               Already have an account? Log in
             </p>
           </form>

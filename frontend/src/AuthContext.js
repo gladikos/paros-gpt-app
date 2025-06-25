@@ -19,6 +19,7 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(stored.user && stored.token ? stored.token : null);
 
   const login = (email, token, remember) => {
+    console.log("🔐 Received token:", token); // ADD THIS
     setUser(email);
     setToken(token);
 
@@ -28,14 +29,24 @@ export function AuthProvider({ children }) {
   };
 
   const logout = () => {
+    const savedAvatar = localStorage.getItem("selectedAvatar"); // backup avatar
+
     setUser(null);
     setToken(null);
     localStorage.clear();
     sessionStorage.clear();
+
+    // restore avatar
+    if (savedAvatar) {
+      localStorage.setItem("selectedAvatar", savedAvatar);
+      window.dispatchEvent(new Event("storage")); // update avatar in sidebar
+    }
   };
+
 
   useEffect(() => {
     const validateSession = async () => {
+      console.log("🔍 Validating session with token:", token);
       if (!token) return;
 
       try {
@@ -47,7 +58,8 @@ export function AuthProvider({ children }) {
 
         if (res.ok) {
           const data = await res.json();
-          localStorage.setItem("username", data.name);
+          localStorage.setItem("username", data.name || data.email || "User");
+          setUser(data.email || data.name || "User"); // ensure user stays set
         } else {
           logout();
         }

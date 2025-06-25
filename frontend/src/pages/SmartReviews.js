@@ -8,6 +8,7 @@ import { AiFillCloseCircle } from "react-icons/ai";
 import { MdSummarize, MdOutlineReviews} from "react-icons/md";
 import { MdOutlineEuroSymbol } from "react-icons/md";
 import { ImLocation } from "react-icons/im";
+import { IoEarth } from "react-icons/io5";
 import "./SmartReviews.css";
 
 const restaurants = [
@@ -223,7 +224,13 @@ function SmartReviews() {
                     </button>
 
                     {showHours && (
-                      <ul style={{ paddingLeft: "1.2rem", marginTop: "0.6rem" }}>
+                      <ul style={{ padding: "1rem 1rem 1rem 2rem",
+                                   marginTop: "0.6rem", 
+                                   animation: "fadeInSlide 0.6s ease-in-out", 
+                                   backgroundColor: "rgb(203, 239, 255)", 
+                                   borderRadius: "18px",
+                                   borderColor: "white"
+                                  }}>
                         {result.opening_hours.map((line, idx) => (
                           <li key={idx}>{line}</li>
                         ))}
@@ -259,26 +266,29 @@ function SmartReviews() {
                     ))}
                   </div>
                 )} */}
-                <div style={{ marginTop: "1.5rem" }}>
+                <div className="smart-review-links">
                   <a
                     href={result.url}
                     target="_blank"
                     rel="noreferrer"
-                    style={{ marginRight: "1.5rem", color: "#0077aa", fontWeight: "bold" }}
+                    className="review-link-button"
                   >
-                    <ImLocation /> View on Google Maps
+                    <ImLocation style={{ marginRight: "0.5rem" }} />
+                    View on Google Maps
                   </a>
                   {result.website && (
                     <a
                       href={result.website}
                       target="_blank"
                       rel="noreferrer"
-                      style={{ color: "#0077aa", fontWeight: "bold" }}
+                      className="review-link-button"
                     >
+                      <IoEarth style={{ marginRight: "0.5rem" }} />
                       View Website
                     </a>
                   )}
                 </div>
+
 
               </div>
             </div>
